@@ -1,0 +1,9 @@
+# IDN 目前只部署 backend 一个 Railway 服务，不部署支付 Worker/Cron。
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "ops/docker/Dockerfile.backend"
+
+[deploy]
+healthcheckPath = "/health"
+healthcheckTimeout = 300
+restartPolicyType = "ON_FAILURE"

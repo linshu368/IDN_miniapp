@@ -1,9 +1,9 @@
 export type DatabaseEnvironment = 'development' | 'test' | 'production';
 export type DatabaseTarget = 'test' | 'production';
 
-export const DEFAULT_PROD_SUPABASE_PROJECT_REF = 'wbtsfzozlmurljvglhpn';
-// test 分支（dev / 本地）的默认 project ref。
-export const DEFAULT_TEST_SUPABASE_PROJECT_REF = 'zoqelpfhurwehlvypryl';
+export const DEFAULT_PROD_SUPABASE_PROJECT_REF = 'idnprodnotcreated000';
+// IDN 目前只有一个 Supabase project，先当作 test/dev 库。
+export const DEFAULT_TEST_SUPABASE_PROJECT_REF = 'bklxvrrtccphrtnpqulh';
 
 type Env = Record<string, string | undefined>;
 

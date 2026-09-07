@@ -35,8 +35,8 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      TEST_PROJECT_REF: zoqelpfhurwehlvypryl
-      PROD_PROJECT_REF: wbtsfzozlmurljvglhpn
+      TEST_PROJECT_REF: bklxvrrtccphrtnpqulh
+      PROD_PROJECT_REF: idnprodnotcreated000
       SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
       TEST_DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
       PROD_DATABASE_URL: ${{ secrets.PROD_DATABASE_URL }}

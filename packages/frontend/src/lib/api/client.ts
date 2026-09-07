@@ -4,8 +4,7 @@ import { getRawInitData, INIT_DATA_HEADER } from '@/lib/telegram/auth';
 import { createLogger } from '@/lib/logger';
 import { sendSentryLog } from '@/lib/sentry/client';
 
-export const API_URL =
-  process.env.NEXT_PUBLIC_API_URL || 'https://stminiapp-development.up.railway.app';
+export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
 const log = createLogger('api');
 

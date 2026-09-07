@@ -8,24 +8,17 @@ const hasSentryUploadConfig = Boolean(
   process.env.SENTRY_ORG && process.env.SENTRY_PROJECT && process.env.SENTRY_AUTH_TOKEN
 );
 
-/** Preview feature PRs talk to Railway env `pr-{number}` → stminiapp-pr-{n}.up.railway.app */
 function resolvePublicApiUrl() {
   const configured = process.env.NEXT_PUBLIC_API_URL;
-  const vercelEnv = process.env.VERCEL_ENV;
-  const target = process.env.VERCEL_TARGET_ENV;
-  const gitRef = process.env.VERCEL_GIT_COMMIT_REF;
-  const prId = process.env.VERCEL_GIT_PULL_REQUEST_ID;
+  if (configured) return configured;
 
-  if (vercelEnv === 'production') {
-    return configured || 'https://stminiapp-production.up.railway.app';
+  const vercelEnv = process.env.VERCEL_ENV;
+  if (vercelEnv === 'production' || vercelEnv === 'preview') {
+    throw new Error(
+      'NEXT_PUBLIC_API_URL must be set for IDN Vercel builds; refusing Chinese MiniApp fallback'
+    );
   }
-  if (target === 'dev' || gitRef === 'dev') {
-    return configured || 'https://stminiapp-development.up.railway.app';
-  }
-  if (vercelEnv === 'preview' && prId) {
-    return `https://stminiapp-pr-${prId}.up.railway.app`;
-  }
-  return configured || 'https://stminiapp-development.up.railway.app';
+  return 'http://localhost:3001';
 }
 
 /** @type {import('next').NextConfig} */

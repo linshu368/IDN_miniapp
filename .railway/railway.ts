@@ -39,9 +39,9 @@
  *
  * ============================================================================
  */
-import { defineRailway, fn, github, preserve, project, service } from 'railway/iac';
+import { defineRailway, github, preserve, project, service } from 'railway/iac';
 
-const REPOSITORY = process.env.RAILWAY_GITHUB_REPO ?? 'linshu368/ST_miniapp';
+const REPOSITORY = process.env.RAILWAY_GITHUB_REPO ?? 'linshu368/IDN_miniapp';
 const COMMON_API_VARIABLES = [
   'ADMIN_PLATFORM_URL',
   'BOT_INTERNAL_SECRET',
@@ -132,71 +132,8 @@ export default defineRailway((ctx) => {
     env: Object.fromEntries(apiVariableNames.map((name) => [name, preserve()])),
   });
 
-  // ── 支付对账：独立服务，禁止把 schedule 配到 HTTP API 服务 ────────────────
-  // 快速查单必须常驻：Railway cron 最短间隔是 5 分钟（平台硬限制，填 * * * * *
-  // 会被拒绝），60～90 秒目标只能靠进程内循环。过期兜底仍用 5 分钟 cron。
-  // 两者都不提供公网入口。
-  const paymentCronEnv = {
-    NODE_ENV: stminiapp.env.NODE_ENV,
-    DATABASE_ENV: stminiapp.env.DATABASE_ENV,
-    DATABASE_URL: stminiapp.env.DATABASE_URL,
-    DIRECT_URL: stminiapp.env.DIRECT_URL,
-    PROD_SUPABASE_PROJECT_REF: stminiapp.env.PROD_SUPABASE_PROJECT_REF,
-    ...(production
-      ? {
-          PROD_DATABASE_URL: stminiapp.env.PROD_DATABASE_URL,
-          PROD_DIRECT_URL: stminiapp.env.PROD_DIRECT_URL,
-          PROD_SUPABASE_URL: stminiapp.env.PROD_SUPABASE_URL,
-          PROD_SUPABASE_SERVICE_ROLE_KEY: stminiapp.env.PROD_SUPABASE_SERVICE_ROLE_KEY,
-        }
-      : {
-          TEST_DATABASE_URL: stminiapp.env.TEST_DATABASE_URL,
-          TEST_DIRECT_URL: stminiapp.env.TEST_DIRECT_URL,
-          TEST_SUPABASE_URL: stminiapp.env.TEST_SUPABASE_URL,
-          TEST_SUPABASE_SERVICE_ROLE_KEY: stminiapp.env.TEST_SUPABASE_SERVICE_ROLE_KEY,
-          TEST_SUPABASE_PROJECT_REF: stminiapp.env.TEST_SUPABASE_PROJECT_REF,
-        }),
-    PAYMENT_ENABLED: stminiapp.env.PAYMENT_ENABLED,
-    PAYMENT_BASE_URL: stminiapp.env.PAYMENT_BASE_URL,
-    PAYMENT_MERCHANT_ID: stminiapp.env.PAYMENT_MERCHANT_ID,
-    PAYMENT_MERCHANT_PRIVATE_KEY: stminiapp.env.PAYMENT_MERCHANT_PRIVATE_KEY,
-    PAYMENT_PLATFORM_PUBLIC_KEY: stminiapp.env.PAYMENT_PLATFORM_PUBLIC_KEY,
-    PAYMENT_NOTIFY_URL: stminiapp.env.PAYMENT_NOTIFY_URL,
-    PAYMENT_RETURN_URL: stminiapp.env.PAYMENT_RETURN_URL,
-  };
-
-  const paymentReconcileWorker = service('stminiapp-payment-reconcile-cron', {
-    source: github(REPOSITORY, { branch }),
-    build: {
-      builder: 'DOCKERFILE',
-      buildCommand: 'pnpm install',
-      buildEnvironment: 'V3',
-      dockerfilePath: '/ops/docker/Dockerfile.backend',
-    },
-    start: 'tsx src/scripts/reconcile-payment-orders.ts',
-    deploy: {
-      restartPolicyType: 'ALWAYS',
-    },
-    env: paymentCronEnv,
-  });
-
-  const paymentCron = fn('stminiapp-payment-cron', {
-    source: github(REPOSITORY, { branch }),
-    build: {
-      builder: 'DOCKERFILE',
-      buildCommand: 'pnpm install',
-      buildEnvironment: 'V3',
-      dockerfilePath: '/ops/docker/Dockerfile.backend',
-    },
-    start: 'tsx src/scripts/expire-payment-orders.ts',
-    deploy: {
-      cronSchedule: '*/5 * * * *',
-      restartPolicyType: 'NEVER',
-    },
-    env: paymentCronEnv,
-  });
-
-  return project('st-miniapp', {
-    resources: [stminiapp, paymentReconcileWorker, paymentCron],
+  // 印尼本期不部署支付 Worker / Cron；需要时再从中文仓对照补回独立服务。
+  return project('IDN_miniapp', {
+    resources: [stminiapp],
   });
 });

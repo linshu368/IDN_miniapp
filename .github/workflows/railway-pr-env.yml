@@ -3,10 +3,9 @@
 # Duplicates Railway `development` only — never production.
 name: Railway PR environment
 
+# IDN 副本禁止复用中文 Railway 项目 ID。需要 PR 环境时再改成印尼项目后打开 pull_request。
 on:
-  pull_request:
-    branches: [dev]
-    types: [opened, reopened, synchronize, closed, ready_for_review]
+  workflow_dispatch:
 
 permissions:
   contents: read
