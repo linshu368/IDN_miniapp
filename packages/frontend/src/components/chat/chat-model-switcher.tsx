@@ -1,13 +1,13 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { Check, ChevronDown, Sparkles } from 'lucide-react';
 import type { PublicModelCatalogTier } from '@miniapp/shared';
 
 import { ApiClientError } from '@/lib/api/client';
 import { useModelCatalogQuery, useSelectModelMutation } from '@/lib/api/models';
 import { cn } from '@/lib/utils';
+import { useInsufficientCreditsNotice } from '@/components/market/use-insufficient-credits-notice';
 
 /**
  * 切换生成模型。版式照搬原版的 ModelTierSwitcher：当前引擎条、可折叠档位、
@@ -25,9 +25,10 @@ export function ChatModelSwitcher({
   /** 切换成功后通知外层收起工具箱，与原版一致 */
   onSwitched?: () => void;
 }) {
-  const router = useRouter();
   const { data, isLoading, isFetching } = useModelCatalogQuery();
   const selectModel = useSelectModelMutation();
+  const { handleInsufficientCredits, insufficientCreditsDialog } =
+    useInsufficientCreditsNotice(returnTo);
   const [error, setError] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
@@ -54,14 +55,9 @@ export function ChatModelSwitcher({
       if (onSwitched) window.setTimeout(onSwitched, 250);
     } catch (err) {
       if (latestSelectRef.current !== modelId) return;
-      // 余额闸门拦下来的话，能做的只有去充值，直接把人送过去
+      // 余额闸门：支付 mock 时改页内提示，开启支付后仍跳充值页
       if (err instanceof ApiClientError && err.code === 'INSUFFICIENT_CREDITS') {
-        router.push(
-          `/profile/recharge?${new URLSearchParams({
-            reason: 'insufficient_credits',
-            returnTo,
-          }).toString()}`
-        );
+        handleInsufficientCredits();
         return;
       }
       setError(err instanceof Error ? err.message : '该模型暂不可用');
@@ -135,6 +131,7 @@ export function ChatModelSwitcher({
           />
         ))}
       </div>
+      {insufficientCreditsDialog}
     </div>
   );
 }

@@ -21,7 +21,8 @@ import type {
   PostDailyCheckinData,
 } from '@miniapp/shared';
 
-import { apiClient } from './client';
+import { apiClient, ApiClientError } from './client';
+import { isMarketFeatureEnabled, MARKET_FEATURE_DISABLED_CODE } from '@/lib/market-features';
 
 // ==== Query Keys ====
 export const paymentKeys = {
@@ -56,6 +57,9 @@ async function fetchOrders(query: GetPaymentOrdersQuery): Promise<GetPaymentOrde
 }
 
 async function postCreateOrder(body: CreatePaymentOrderRequest): Promise<CreatePaymentOrderData> {
+  if (!isMarketFeatureEnabled('payment')) {
+    throw new ApiClientError('Payment is not available', 403, MARKET_FEATURE_DISABLED_CODE);
+  }
   return apiClient<CreatePaymentOrderData>('/api/payment/orders', {
     method: 'POST',
     body: JSON.stringify(body),
@@ -86,6 +90,7 @@ export function usePaymentPlansQuery() {
   return useQuery<GetPaymentPlansData>({
     queryKey: paymentKeys.plans(),
     queryFn: fetchPlans,
+    enabled: isMarketFeatureEnabled('payment'),
     // 响应同时包含运营可热更的余额不足提示语，每次进入充值页都拉取最新值。
     staleTime: 0,
     refetchOnMount: 'always',
@@ -110,7 +115,7 @@ export function useCreatePaymentOrderMutation() {
 export function usePaymentOrderQuery(orderId: string | undefined) {
   return useQuery<GetPaymentOrderData>({
     queryKey: orderId ? paymentKeys.order(orderId) : paymentKeys.orders(),
-    enabled: !!orderId,
+    enabled: isMarketFeatureEnabled('payment') && !!orderId,
     queryFn: async () => {
       if (!orderId) throw new Error('order id is required');
       return fetchOrder(orderId);
@@ -181,6 +186,7 @@ export function usePaymentOrdersInfiniteQuery(
     string | undefined
   >({
     queryKey: paymentKeys.ordersList(statusFilter),
+    enabled: isMarketFeatureEnabled('payment'),
     initialPageParam: undefined,
     queryFn: async ({ pageParam }) => {
       const query: GetPaymentOrdersQuery = {

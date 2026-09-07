@@ -12,8 +12,10 @@ import {
 } from 'lucide-react';
 
 import { Sheet, SheetContent, SheetDescription, SheetTitle } from '@/components/ui/sheet';
+import { FeatureUnavailablePanel } from '@/components/market/feature-unavailable';
 import { cn } from '@/lib/utils';
 import { useModelCatalogQuery } from '@/lib/api/models';
+import { isMarketFeatureEnabled } from '@/lib/market-features';
 import { ChatGenerationSettings } from './chat-generation-settings';
 import { ChatModelSwitcher } from './chat-model-switcher';
 import { ToolRow } from './chat-tool-row';
@@ -140,9 +142,13 @@ export function ChatToolsSheet({ returnTo, onCreateConversation, creating }: Cha
                   />
                 </div>
               ) : tab === 'voice' ? (
-                <ChatVoiceSettings onOpenVoicePicker={() => setPanel('voice')} />
+                isMarketFeatureEnabled('voice') ? (
+                  <ChatVoiceSettings onOpenVoicePicker={() => setPanel('voice')} />
+                ) : (
+                  <FeatureUnavailablePanel kind="voice" />
+                )
               ) : (
-                <ComingSoon label="图片设置" />
+                <FeatureUnavailablePanel kind="image" />
               )}
             </>
           ) : (
@@ -164,9 +170,11 @@ export function ChatToolsSheet({ returnTo, onCreateConversation, creating }: Cha
 
               {panel === 'model' ? (
                 <ChatModelSwitcher returnTo={returnTo} onSwitched={() => setOpen(false)} />
-              ) : panel === 'voice' ? (
+              ) : panel === 'voice' && isMarketFeatureEnabled('voice') ? (
                 // 选完音色回一级页，而不是关掉整个抽屉：用户接着可能要调倍速
                 <ChatVoicePicker onPicked={() => setPanel(null)} />
+              ) : panel === 'voice' ? (
+                <FeatureUnavailablePanel kind="voice" />
               ) : (
                 <ChatGenerationSettings />
               )}
@@ -175,14 +183,5 @@ export function ChatToolsSheet({ returnTo, onCreateConversation, creating }: Cha
         </SheetContent>
       </Sheet>
     </>
-  );
-}
-
-function ComingSoon({ label }: { label: string }) {
-  return (
-    <div className="rounded-2xl border border-dashed border-border bg-card/50 px-4 py-10 text-center">
-      <p className="text-[13px] font-semibold text-foreground">{label}即将开放</p>
-      <p className="mt-1 text-[11px] text-muted-foreground">这一栏还在做，先占个位置</p>
-    </div>
   );
 }

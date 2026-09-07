@@ -4,6 +4,7 @@ import { type CSSProperties, useCallback, useEffect, useMemo, useRef, useState }
 import { useRouter } from 'next/navigation';
 import { ChevronLeft, Send, Sparkles } from 'lucide-react';
 
+import { FeatureUnavailablePage } from '@/components/market/feature-unavailable';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import {
@@ -12,6 +13,7 @@ import {
   useCompleteWishMutation,
   useWishStatusQuery,
 } from '@/lib/api/wishes';
+import { isMarketFeatureEnabled } from '@/lib/market-features';
 import { cn } from '@/lib/utils';
 import { useHaptic, useTelegramBackButton } from '@/lib/telegram';
 
@@ -53,6 +55,14 @@ function restoreWishMessages(wish: { wish_text: string; extra_text?: string | nu
 }
 
 export default function WishPage() {
+  if (!isMarketFeatureEnabled('wishes')) {
+    return <FeatureUnavailablePage kind="wish" backHref="/create" />;
+  }
+
+  return <WishPageContent />;
+}
+
+function WishPageContent() {
   const router = useRouter();
   const wishStatus = useWishStatusQuery();
   const { isPending: isCreatingWish, mutateAsync: createWishAsync } = useCreateWishMutation();

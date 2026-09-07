@@ -2,13 +2,11 @@
 
 import { BottomNav } from '@/components/nav/bottom-nav';
 import { usePathname } from 'next/navigation';
-
-const NAV_HIDDEN_PREFIXES = ['/profile/recharge', '/create/wish'];
+import { shouldHideBottomNavForMarketFlows } from '@/lib/market-features';
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const hideBottomNav =
-    pathname && NAV_HIDDEN_PREFIXES.some((prefix) => pathname.startsWith(prefix));
+  const hideBottomNav = shouldHideBottomNavForMarketFlows(pathname);
 
   return (
     <>

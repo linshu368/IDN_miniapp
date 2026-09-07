@@ -13,11 +13,12 @@ import {
 } from 'lucide-react';
 import type { PaymentOrder, PaymentOrderStatus } from '@miniapp/shared';
 
+import { FeatureUnavailablePage } from '@/components/market/feature-unavailable';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
 import { usePaymentOrdersInfiniteQuery } from '@/lib/api/payment';
+import { isMarketFeatureEnabled } from '@/lib/market-features';
 import {
   formatNumber,
   formatYuanShort,
@@ -40,6 +41,14 @@ function tabToStatus(tab: TabKey): PaymentOrderStatus | 'all' {
 }
 
 export default function OrdersPage() {
+  if (!isMarketFeatureEnabled('payment')) {
+    return <FeatureUnavailablePage kind="orders" backHref="/profile" showCreditActions />;
+  }
+
+  return <OrdersPageContent />;
+}
+
+function OrdersPageContent() {
   const router = useRouter();
   const goBack = useCallback(() => router.push('/profile'), [router]);
   useTelegramBackButton(goBack);

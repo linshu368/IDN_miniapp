@@ -1,9 +1,19 @@
 import Link from 'next/link';
 import { Sparkles } from 'lucide-react';
 
+import { FeatureUnavailablePage } from '@/components/market/feature-unavailable';
 import { Button } from '@/components/ui/button';
+import { isMarketFeatureEnabled } from '@/lib/market-features';
 
 export default function CreatePage() {
+  if (!isMarketFeatureEnabled('wishes')) {
+    return <FeatureUnavailablePage kind="create" />;
+  }
+
+  return <CreatePageLive />;
+}
+
+function CreatePageLive() {
   return (
     <main
       data-app-shell="create"

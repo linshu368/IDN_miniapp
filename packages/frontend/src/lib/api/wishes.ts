@@ -9,8 +9,9 @@ import type {
   GetWishRoleStatusData,
 } from '@miniapp/shared';
 
-import { apiClient } from './client';
+import { apiClient, ApiClientError } from './client';
 import { getRawInitData, INIT_DATA_HEADER } from '@/lib/telegram/auth';
+import { isMarketFeatureEnabled, MARKET_FEATURE_DISABLED_CODE } from '@/lib/market-features';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
@@ -24,6 +25,9 @@ async function fetchWishStatus(): Promise<GetWishRoleStatusData> {
 }
 
 async function postCreateWish(body: CreateWishRoleRequest): Promise<CreateWishRoleData> {
+  if (!isMarketFeatureEnabled('wishes')) {
+    throw new ApiClientError('Wishes are not available', 403, MARKET_FEATURE_DISABLED_CODE);
+  }
   return apiClient<CreateWishRoleData>('/api/wishes', {
     method: 'POST',
     body: JSON.stringify(body),
@@ -34,6 +38,9 @@ async function postCompleteWish(input: {
   id: string;
   body: CompleteWishRoleRequest;
 }): Promise<CompleteWishRoleData> {
+  if (!isMarketFeatureEnabled('wishes')) {
+    throw new ApiClientError('Wishes are not available', 403, MARKET_FEATURE_DISABLED_CODE);
+  }
   return apiClient<CompleteWishRoleData>(`/api/wishes/${encodeURIComponent(input.id)}/complete`, {
     method: 'POST',
     body: JSON.stringify(input.body),
@@ -41,6 +48,7 @@ async function postCompleteWish(input: {
 }
 
 export function completeWishOnExit(id: string): void {
+  if (!isMarketFeatureEnabled('wishes')) return;
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
   };
@@ -59,6 +67,7 @@ export function useWishStatusQuery() {
   return useQuery<GetWishRoleStatusData>({
     queryKey: wishKeys.status(),
     queryFn: fetchWishStatus,
+    enabled: isMarketFeatureEnabled('wishes'),
     staleTime: 15_000,
   });
 }

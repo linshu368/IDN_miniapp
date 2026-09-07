@@ -34,15 +34,21 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 
 import { cn } from '@/lib/utils';
+import { FeatureUnavailablePage } from '@/components/market/feature-unavailable';
 import { PlanCard } from '@/components/payment/plan-card';
 import { useInviteEntryStatusQuery } from '@/lib/api/invite';
 import { useCreatePaymentOrderMutation, usePaymentPlansQuery } from '@/lib/api/payment';
+import { isMarketFeatureEnabled } from '@/lib/market-features';
 import { formatYuanShort, paymentTypeLabel, safePaymentReturnTo } from '@/lib/utils/payment';
 import { openPaymentUrl, useHaptic, useTelegramBackButton } from '@/lib/telegram';
 
 const PAYMENT_TYPES: PaymentType[] = ['wxpay'];
 
 export default function RechargePage() {
+  if (!isMarketFeatureEnabled('payment')) {
+    return <FeatureUnavailablePage kind="payment" backHref="/profile" showCreditActions />;
+  }
+
   return (
     <Suspense fallback={<RechargePageSkeleton />}>
       <RechargePageContent />

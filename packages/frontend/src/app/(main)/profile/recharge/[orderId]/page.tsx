@@ -6,10 +6,12 @@ import { useQueryClient } from '@tanstack/react-query';
 import { CheckCircle2, ChevronLeft, Clock, Loader2, XCircle } from 'lucide-react';
 import { DEFAULT_RECHARGE_PAGE_CONFIG, type PaymentOrder } from '@miniapp/shared';
 
+import { FeatureUnavailablePage } from '@/components/market/feature-unavailable';
 import { Button } from '@/components/ui/button';
 
 import { cn } from '@/lib/utils';
 import { paymentKeys, usePaymentOrderQuery, usePaymentPlansQuery } from '@/lib/api/payment';
+import { isMarketFeatureEnabled } from '@/lib/market-features';
 import {
   formatCountdown,
   formatNumber,
@@ -21,6 +23,14 @@ import {
 import { openPaymentUrl, useHaptic, useTelegramBackButton } from '@/lib/telegram';
 
 export default function PaymentPendingPage() {
+  if (!isMarketFeatureEnabled('payment')) {
+    return <FeatureUnavailablePage kind="payment" backHref="/profile" showCreditActions />;
+  }
+
+  return <PaymentPendingPageContent />;
+}
+
+function PaymentPendingPageContent() {
   const params = useParams<{ orderId: string }>();
   const orderId = params?.orderId ? decodeURIComponent(params.orderId) : undefined;
   const search = useSearchParams();

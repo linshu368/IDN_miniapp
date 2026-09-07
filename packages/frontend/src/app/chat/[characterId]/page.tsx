@@ -20,6 +20,8 @@ import { ChatToolsSheet } from '@/components/chat/chat-tools-sheet';
 import { ChatTopBar } from '@/components/chat/chat-top-bar';
 import { lobbyImageUrl } from '@/components/characters/character-card';
 import { ChatSplash } from '@/components/chat/chat-splash';
+import { FeatureUnavailableDialog } from '@/components/market/market-dialogs';
+import { useInsufficientCreditsNotice } from '@/components/market/use-insufficient-credits-notice';
 import { useCharacterQuery } from '@/lib/api/characters';
 import { ConversationStreamError, streamConversationTurn } from '@/lib/api/conversation-stream';
 import {
@@ -40,6 +42,7 @@ import {
 } from '@/lib/api/voice';
 import { customVoicePath } from '@/lib/chat-entry';
 import { formatFreeQuotaExhaustedNotice } from '@/lib/free-quota-dialog';
+import { isMarketFeatureEnabled } from '@/lib/market-features';
 import { useTelegramBackButton } from '@/lib/telegram';
 import { useVisualViewportHeight } from '@/lib/use-visual-viewport-height';
 
@@ -76,6 +79,7 @@ export default function SelfHostedChatPage() {
     null
   );
   const [entryAttempt, setEntryAttempt] = useState(0);
+  const [voiceUnavailableOpen, setVoiceUnavailableOpen] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
 
   const characterQuery = useCharacterQuery(characterId);
@@ -86,9 +90,14 @@ export default function SelfHostedChatPage() {
   const freeQuotaQuery = useCharacterFreeQuotaQuery(characterId);
   const refetchFreeQuota = freeQuotaQuery.refetch;
   const userSettingsQuery = useUserSettingsQuery();
-  const voiceConfigQuery = useVoiceConfigQuery();
-  const sessionVoiceQuery = useSessionVoiceQuery(activeSessionId ?? undefined);
-  const generateVoice = useGenerateVoiceMutation(activeSessionId ?? undefined);
+  const voiceEnabled = isMarketFeatureEnabled('voice');
+  const voiceConfigQuery = useVoiceConfigQuery(voiceEnabled);
+  const sessionVoiceQuery = useSessionVoiceQuery(
+    voiceEnabled ? (activeSessionId ?? undefined) : undefined
+  );
+  const generateVoice = useGenerateVoiceMutation(
+    voiceEnabled ? (activeSessionId ?? undefined) : undefined
+  );
   const viewportHeight = useVisualViewportHeight();
 
   const character = characterQuery.data?.character;
@@ -105,6 +114,8 @@ export default function SelfHostedChatPage() {
         : `/chat/${encodeURIComponent(characterId)}`,
     [characterId, activeSessionId]
   );
+  const { handleInsufficientCredits, insufficientCreditsDialog } =
+    useInsufficientCreditsNotice(returnTo);
 
   /**
    * 额度快照要在 runTurn 里按调用时刻取，而 runTurn 是 useCallback——直接读
@@ -254,9 +265,10 @@ export default function SelfHostedChatPage() {
     : '';
 
   useEffect(() => {
+    if (!voiceEnabled) return;
     const charged = sessionVoiceQuery.data?.audio.some((item) => item.credits_charged > 0);
     if (charged) void queryClient.invalidateQueries({ queryKey: paymentKeys.wallet() });
-  }, [queryClient, sessionVoiceQuery.data]);
+  }, [queryClient, sessionVoiceQuery.data, voiceEnabled]);
 
   /**
    * 哪些消息能生成语音。turn_index > 0 排掉开场白，status 排掉正在写和没写完的——
@@ -270,6 +282,10 @@ export default function SelfHostedChatPage() {
 
   const handleGenerateVoice = useCallback(
     (messageId: string) => {
+      if (!voiceEnabled) {
+        setVoiceUnavailableOpen(true);
+        return;
+      }
       generateVoice.mutate(
         { messageId },
         {
@@ -277,14 +293,8 @@ export default function SelfHostedChatPage() {
             // 异步阶段的失败由记录里的 failed 状态呈现，这里只管受理阶段的
             const code = (error as { code?: string }).code;
             if (code === 'insufficient_balance') {
-              // 复用对话链路同一条跳转，不另做弹窗。金额由 apiClient 从 402 裸形状带出。
               const balance = (error as { balance?: { creditsRequired: number } }).balance;
-              const search = new URLSearchParams({
-                reason: 'insufficient_credits',
-                returnTo,
-              });
-              if (balance) search.set('required', String(balance.creditsRequired));
-              router.push(`/profile/recharge?${search.toString()}`);
+              handleInsufficientCredits(balance?.creditsRequired);
               return;
             }
             setStreamError(
@@ -298,7 +308,7 @@ export default function SelfHostedChatPage() {
         }
       );
     },
-    [generateVoice, returnTo, router]
+    [generateVoice, handleInsufficientCredits, voiceEnabled]
   );
 
   // ── 发送与重生成 ──────────────────────────────────────────────────────────
@@ -359,9 +369,7 @@ export default function SelfHostedChatPage() {
 
       switch (error.code) {
         case 'insufficient_balance': {
-          const search = new URLSearchParams({ reason: 'insufficient_credits', returnTo });
-          if (error.balance) search.set('required', String(error.balance.creditsRequired));
-          router.push(`/profile/recharge?${search.toString()}`);
+          handleInsufficientCredits(error.balance?.creditsRequired);
           restoreDraft(input);
           return;
         }
@@ -386,7 +394,7 @@ export default function SelfHostedChatPage() {
           restoreDraft(input);
       }
     },
-    [goBack, queryClient, restoreDraft, returnTo, router, activeSessionId]
+    [goBack, handleInsufficientCredits, queryClient, restoreDraft, activeSessionId]
   );
 
   const runTurn = useCallback(
@@ -572,12 +580,13 @@ export default function SelfHostedChatPage() {
                         generateVoice.isPending &&
                         generateVoice.variables?.messageId === message.id,
                       onGenerate: () => handleGenerateVoice(message.id),
-                      customHref: activeSessionId
-                        ? customVoicePath(characterId, message.id, {
-                            sessionId: activeSessionId,
-                            returnTo,
-                          })
-                        : null,
+                      customHref:
+                        voiceEnabled && activeSessionId
+                          ? customVoicePath(characterId, message.id, {
+                              sessionId: activeSessionId,
+                              returnTo,
+                            })
+                          : null,
                       priceLabel: voicePriceLabel,
                       hints: {
                         overLimit: voiceConfigQuery.data?.hints?.over_limit ?? '',
@@ -661,6 +670,12 @@ export default function SelfHostedChatPage() {
           setEntryAttempt((attempt) => attempt + 1);
           if (activeSessionId) void conversationQuery.refetch();
         }}
+      />
+      {insufficientCreditsDialog}
+      <FeatureUnavailableDialog
+        kind="voice"
+        open={voiceUnavailableOpen}
+        onOpenChange={setVoiceUnavailableOpen}
       />
     </div>
   );

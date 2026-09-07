@@ -9,7 +9,8 @@ import type {
   PatchVoiceConfigData,
   PatchVoiceConfigRequest,
 } from '@miniapp/shared';
-import { apiClient } from './client';
+import { apiClient, ApiClientError } from './client';
+import { isMarketFeatureEnabled, MARKET_FEATURE_DISABLED_CODE } from '@/lib/market-features';
 
 export const voiceKeys = {
   config: ['voice-config'] as const,
@@ -20,7 +21,7 @@ export const voiceKeys = {
 export function useVoiceConfigQuery(enabled = true) {
   return useQuery<GetVoiceConfigData>({
     queryKey: voiceKeys.config,
-    enabled,
+    enabled: enabled && isMarketFeatureEnabled('voice'),
     queryFn: async () => apiClient<GetVoiceConfigData>('/api/v1/voice/config'),
     staleTime: 5 * 60 * 1000,
   });
@@ -30,11 +31,15 @@ export function usePatchVoiceConfigMutation() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (request: PatchVoiceConfigRequest) =>
-      apiClient<PatchVoiceConfigData>('/api/v1/voice/config', {
+    mutationFn: async (request: PatchVoiceConfigRequest) => {
+      if (!isMarketFeatureEnabled('voice')) {
+        throw new ApiClientError('Voice is not available', 403, MARKET_FEATURE_DISABLED_CODE);
+      }
+      return apiClient<PatchVoiceConfigData>('/api/v1/voice/config', {
         method: 'PATCH',
         body: JSON.stringify(request),
-      }),
+      });
+    },
     onSuccess: (data) => {
       queryClient.setQueryData<GetVoiceConfigData>(voiceKeys.config, data);
     },
@@ -50,7 +55,7 @@ export function usePatchVoiceConfigMutation() {
 export function useSessionVoiceQuery(sessionId: string | undefined) {
   return useQuery<GetSessionVoiceData>({
     queryKey: voiceKeys.session(sessionId ?? ''),
-    enabled: Boolean(sessionId),
+    enabled: isMarketFeatureEnabled('voice') && Boolean(sessionId),
     queryFn: async () => {
       if (!sessionId) throw new Error('session id is required');
       return apiClient<GetSessionVoiceData>(
@@ -78,6 +83,9 @@ export function useGenerateVoiceMutation(sessionId: string | undefined) {
 
   return useMutation({
     mutationFn: async ({ messageId, customText }: GenerateVoiceInput) => {
+      if (!isMarketFeatureEnabled('voice')) {
+        throw new ApiClientError('Voice is not available', 403, MARKET_FEATURE_DISABLED_CODE);
+      }
       if (!sessionId) throw new Error('session id is required');
       return apiClient<CreateMessageVoiceData>(
         `/api/v1/conversations/${encodeURIComponent(sessionId)}/messages/${encodeURIComponent(

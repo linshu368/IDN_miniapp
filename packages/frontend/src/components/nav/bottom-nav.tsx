@@ -8,6 +8,7 @@ import { Home, MessageCircle, Sparkles, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useNotificationUnreadCountQuery } from '@/lib/api/notifications';
 import { useSupportUnreadQuery } from '@/lib/api/support';
+import { shouldHideBottomNavForMarketFlows } from '@/lib/market-features';
 
 const NAV_ITEMS = [
   { href: '/', label: '大厅', Icon: Home },
@@ -16,13 +17,9 @@ const NAV_ITEMS = [
   { href: '/profile', label: '我的', Icon: User },
 ] as const;
 
-// 深层页面（支付流程、沉浸式输入页、消息与客服会话）隐藏底部导航，让主内容拿满可视高度
-const HIDDEN_PREFIXES = [
-  '/profile/recharge',
-  '/profile/messages',
-  '/profile/support',
-  '/create/wish',
-];
+// 深层页面（沉浸式输入页、消息与客服会话）隐藏底部导航。
+// 支付 / 许愿深页在能力开启时才藏栏，见 shouldHideBottomNavForMarketFlows。
+const HIDDEN_PREFIXES = ['/profile/messages', '/profile/support'];
 
 export function BottomNav() {
   const pathname = usePathname();
@@ -58,7 +55,10 @@ export function BottomNav() {
     return () => window.clearTimeout(timer);
   }, [router]);
 
-  if (pathname && HIDDEN_PREFIXES.some((p) => pathname.startsWith(p))) {
+  if (
+    shouldHideBottomNavForMarketFlows(pathname) ||
+    (pathname && HIDDEN_PREFIXES.some((p) => pathname.startsWith(p)))
+  ) {
     return null;
   }
 

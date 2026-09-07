@@ -6,6 +6,8 @@ import { ChevronLeft, Loader2 } from 'lucide-react';
 import { MAX_CUSTOM_VOICE_CHARS } from '@miniapp/shared';
 
 import { Button } from '@/components/ui/button';
+import { FeatureUnavailablePage } from '@/components/market/feature-unavailable';
+import { useInsufficientCreditsNotice } from '@/components/market/use-insufficient-credits-notice';
 import {
   toVoiceMap,
   useGenerateVoiceMutation,
@@ -13,6 +15,7 @@ import {
   useVoiceConfigQuery,
 } from '@/lib/api/voice';
 import { chatEntryPath } from '@/lib/chat-entry';
+import { isMarketFeatureEnabled } from '@/lib/market-features';
 import { useTelegramBackButton } from '@/lib/telegram';
 
 /**
@@ -25,6 +28,28 @@ import { useTelegramBackButton } from '@/lib/telegram';
  * 页面上把这句话写出来，否则用户不敢点。
  */
 export default function CustomVoicePage() {
+  if (!isMarketFeatureEnabled('voice')) {
+    return <CustomVoiceUnavailablePage />;
+  }
+
+  return <CustomVoicePageContent />;
+}
+
+function CustomVoiceUnavailablePage() {
+  const params = useParams<{ characterId: string }>();
+  const searchParams = useSearchParams();
+  const characterId = params.characterId;
+  const sessionId = searchParams.get('session');
+  const returnTo = searchParams.get('returnTo');
+  const backTo =
+    returnTo && returnTo.startsWith('/') && !returnTo.startsWith('//')
+      ? returnTo
+      : chatEntryPath(characterId, { sessionId: sessionId ?? undefined });
+
+  return <FeatureUnavailablePage kind="voice" backHref={backTo} />;
+}
+
+function CustomVoicePageContent() {
   const router = useRouter();
   const params = useParams<{ characterId: string; messageId: string }>();
   const searchParams = useSearchParams();
@@ -41,6 +66,8 @@ export default function CustomVoicePage() {
 
   const goBack = useCallback(() => router.replace(backTo), [router, backTo]);
   useTelegramBackButton(goBack);
+  const { handleInsufficientCredits, insufficientCreditsDialog } =
+    useInsufficientCreditsNotice(backTo);
 
   const sessionVoice = useSessionVoiceQuery(sessionId ?? undefined);
   const generateVoice = useGenerateVoiceMutation(sessionId ?? undefined);
@@ -52,7 +79,6 @@ export default function CustomVoicePage() {
     voiceConfig.data?.limits?.max_spoken_chars ?? MAX_CUSTOM_VOICE_CHARS,
     MAX_CUSTOM_VOICE_CHARS
   );
-  const returnToForRecharge = backTo;
 
   const currentText = useMemo(
     () => toVoiceMap(sessionVoice.data).get(messageId)?.spoken_text ?? '',
@@ -93,14 +119,8 @@ export default function CustomVoicePage() {
         onError: (mutationError) => {
           const code = (mutationError as { code?: string }).code;
           if (code === 'insufficient_balance') {
-            // 402 跳充值页，复用对话链路。金额由 apiClient 从 402 裸形状带出。
             const balance = (mutationError as { balance?: { creditsRequired: number } }).balance;
-            const search = new URLSearchParams({
-              reason: 'insufficient_credits',
-              returnTo: returnToForRecharge,
-            });
-            if (balance) search.set('required', String(balance.creditsRequired));
-            router.push(`/profile/recharge?${search.toString()}`);
+            handleInsufficientCredits(balance?.creditsRequired);
             return;
           }
           setError(
@@ -263,6 +283,7 @@ export default function CustomVoicePage() {
           )}
         </Button>
       </div>
+      {insufficientCreditsDialog}
     </main>
   );
 }

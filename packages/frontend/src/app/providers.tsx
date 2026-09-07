@@ -11,6 +11,7 @@ import { getQueryClient } from '@/lib/api/query-client';
 import { recordMiniappEntry } from '@/lib/api/growth';
 import { bindInvite } from '@/lib/api/invite';
 import { useUserSettingsQuery } from '@/lib/api/settings';
+import { resolvePaymentReturnPath } from '@/lib/market-features';
 import { loadSessionReplay, setTelegramUser } from '@/lib/sentry/client';
 import { getRawInitData } from '@/lib/telegram/auth';
 import { initTelegramSdk } from '@/lib/telegram/init';
@@ -57,16 +58,9 @@ function PaymentReturnRedirect() {
   const router = useRouter();
 
   useEffect(() => {
-    const startParam = getStartParam();
-    if (startParam === 'payment_return') {
-      router.replace('/profile/orders?payment=returned');
-      return;
-    }
-    if (!startParam.startsWith(PAYMENT_RETURN_PREFIX)) return;
-
-    const orderId = startParam.slice(PAYMENT_RETURN_PREFIX.length);
-    if (!orderId || orderId.length > 200 || !/^[A-Za-z0-9_-]+$/.test(orderId)) return;
-    router.replace(`/profile/recharge/${encodeURIComponent(orderId)}?payment=returned`);
+    const path = resolvePaymentReturnPath(getStartParam());
+    if (!path) return;
+    router.replace(path);
   }, [router]);
 
   return null;
