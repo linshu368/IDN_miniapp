@@ -46,3 +46,6 @@ kk标签测试/
 yunyinghoutai_wenjian/
 .env*
 !packages/admin/.env.example
+
+# 印尼部署本地引导材料（含密钥），禁止入库
+.local-idn/
