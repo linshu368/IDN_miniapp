@@ -26,7 +26,7 @@ import { renderPlatformInstructions, wrapUserInput } from './render-instructions
  *    与 bot 现状一致；ST 生态卡下架后再按新卡写法决定要不要并入。
  * 3. **不在引擎里裁窗口**。入模下界由 SQL 水位线决定，truncatedTurns 只回填观测值。
  *
- * input.persona：把 messages 里的 {{user}} 换成生效显示名；空则回落「你」。
+ * input.persona：把 messages 里的 {{user}} 换成生效显示名；空则回落 kamu。
  * 在组装完成后再替换，system / 历史 / 本轮输入都覆盖到。
  */
 export function buildPrompt(input: EngineInput): EngineOutput {

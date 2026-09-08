@@ -4,6 +4,8 @@
 
 import { z } from 'zod';
 
+import { CREDITS_NAME } from '../market-locale.js';
+
 export type PaymentType = 'alipay' | 'wxpay';
 
 /** 与老 Bot 后端 payment_orders.payment_status 保持一致：pending → completed / expired / failed */
@@ -67,7 +69,7 @@ export const PaymentPlansSchema = z
     }
   });
 
-export const DEFAULT_PENDING_ARRIVAL_HINT = '完成付款后积分将自动到账，通常不超过 3 分钟';
+export const DEFAULT_PENDING_ARRIVAL_HINT = `Setelah bayar, ${CREDITS_NAME} biasanya masuk dalam 3 menit`;
 
 export const RechargePageConfigSchema = z.object({
   title: z.string().trim().min(1).max(30),
@@ -97,9 +99,9 @@ export const RechargePageConfigSchema = z.object({
 export type RechargePageConfig = z.infer<typeof RechargePageConfigSchema>;
 
 export const DEFAULT_RECHARGE_PAGE_CONFIG: RechargePageConfig = {
-  title: '星尘商店',
-  description: '为每段相遇点一盏星光',
-  button_text: '立即支付',
+  title: `Isi ${CREDITS_NAME}`,
+  description: 'Isi ulang belum dibuka di versi ini.',
+  button_text: 'Bayar',
   theme_color: '#ec4899',
   balance_color: '#8b5cf6',
   selected_plan_color: '#f59e0b',
@@ -118,7 +120,7 @@ export const PaymentPromptDialogConfigSchema = z.object({
     .trim()
     .min(1)
     .max(100)
-    .default('点击确认后，将继续跳转到外部浏览器完成微信支付。'),
+    .default('Setelah konfirmasi, kamu akan lanjut ke browser eksternal untuk bayar.'),
   accent_color: z.string().regex(/^#[0-9a-fA-F]{6}$/),
 });
 
@@ -126,10 +128,10 @@ export type PaymentPromptDialogConfig = z.infer<typeof PaymentPromptDialogConfig
 
 export const DEFAULT_PAYMENT_PROMPT_DIALOG_CONFIG: PaymentPromptDialogConfig = {
   enabled: true,
-  title: '支付前请先关闭 VPN',
-  description: '为避免支付页面无法打开、订单异常或到账延迟，请关闭 VPN 后再继续支付。',
-  confirm_text: '已关闭VPN，去截图保存二维码',
-  footer_note: '点击确认后，将继续跳转到外部浏览器完成微信支付。',
+  title: 'Matikan VPN dulu sebelum bayar',
+  description: `Supaya halaman bayar bisa dibuka dan ${CREDITS_NAME} masuk lancar, matikan VPN dulu.`,
+  confirm_text: 'VPN sudah mati, lanjutkan',
+  footer_note: 'Setelah konfirmasi, kamu akan lanjut ke browser eksternal untuk bayar.',
   accent_color: '#f59e0b',
 };
 

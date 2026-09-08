@@ -1,0 +1,236 @@
+{
+  "currency": "Binar",
+  "entries": [
+    {
+      "key": "miniapp_new_user_signup_bonus_credits",
+      "value": 398,
+      "text_value": null,
+      "description": "印尼试水：新用户首次进入赠送的 bonus Binar。"
+    },
+    {
+      "key": "miniapp_daily_checkin_bonus_credits",
+      "value": 40,
+      "text_value": null,
+      "description": "印尼试水：每日签到赠送的 bonus Binar。"
+    },
+    {
+      "key": "miniapp_character_free_chat_quota_limit",
+      "value": 40,
+      "text_value": null,
+      "description": "印尼试水：单张角色卡免费对话轮次。"
+    },
+    {
+      "key": "llm_pricing_config",
+      "value": {
+        "fixedDeduction": {
+          "freeQuotaExhausted": 10,
+          "light": 15,
+          "standard": 30,
+          "premium": 50
+        }
+      },
+      "text_value": null,
+      "description": "印尼试水：每次成功生成的固定扣费（免费额度用尽 / 轻量 / 标准 / 旗舰）。"
+    },
+    {
+      "key": "llm_model_catalog",
+      "value": {
+        "default_model_id": "gemini-flash-lite",
+        "tiers": [
+          {
+            "tier": "light",
+            "label": "Ringan",
+            "color": "#4ade80",
+            "cost_hint": "Cocok percakapan sehari-hari",
+            "sort_order": 0,
+            "models": [
+              {
+                "id": "gemini-flash-lite",
+                "openrouter_model_id": "google/gemini-3.1-flash-lite",
+                "display_name": "Gemini Flash Lite",
+                "tagline": "Cepat untuk chat harian",
+                "is_free": true,
+                "enabled": true,
+                "sort_order": 0
+              }
+            ]
+          },
+          {
+            "tier": "standard",
+            "label": "Standar",
+            "color": "#818cf8",
+            "cost_hint": "Kualitas dan biaya seimbang",
+            "sort_order": 1,
+            "models": [
+              {
+                "id": "deepseek-v3.2",
+                "openrouter_model_id": "deepseek/deepseek-v3.2",
+                "display_name": "DeepSeek V3.2",
+                "tagline": "Seimbang dan tajam",
+                "is_free": false,
+                "enabled": true,
+                "sort_order": 0
+              }
+            ]
+          },
+          {
+            "tier": "premium",
+            "label": "Unggulan",
+            "color": "#c084fc",
+            "cost_hint": "Alur panjang dan rumit",
+            "sort_order": 2,
+            "models": [
+              {
+                "id": "gemini-3.1-pro",
+                "openrouter_model_id": "google/gemini-3.1-pro-preview",
+                "display_name": "Gemini 3.1 Pro",
+                "tagline": "Imersif dan detail",
+                "is_free": false,
+                "enabled": true,
+                "sort_order": 0
+              }
+            ]
+          }
+        ]
+      },
+      "text_value": null,
+      "description": "印尼试水：模型目录。默认免费轻量模型，保证无充值也能聊。"
+    },
+    {
+      "key": "pref_word_count_tiers",
+      "value": {
+        "tiers": [
+          {
+            "id": "100-300",
+            "ui_label": "Pendek",
+            "prompt_value": "50-150 kata",
+            "enabled": true,
+            "sort_order": 0
+          },
+          {
+            "id": "300-500",
+            "ui_label": "Sedang",
+            "prompt_value": "150-250 kata",
+            "enabled": true,
+            "sort_order": 1
+          },
+          {
+            "id": "500-800",
+            "ui_label": "Panjang",
+            "prompt_value": "250-400 kata",
+            "enabled": true,
+            "sort_order": 2
+          },
+          {
+            "id": "800+",
+            "ui_label": "Sangat panjang",
+            "prompt_value": "400+ kata",
+            "enabled": true,
+            "sort_order": 3
+          }
+        ],
+        "default_tier_id": "300-500",
+        "layout": { "columns": 4 }
+      },
+      "text_value": null,
+      "description": "印尼试水：回复长度按 kata 配置；档位 id 保持与中文站兼容。"
+    },
+    {
+      "key": "interaction_mode_blocks",
+      "value": {
+        "options_on": "Setelah teks cerita, buat baris baru dan berikan 2-3 opsi untuk pengguna. Opsi harus menyambung secara alami dari situasi saat ini, tanpa memaksa sikap atau emosi. Pengguna boleh memilih salah satu, atau mengabaikannya dan mengetik sendiri. Opsi hanyalah saran, bukan batasan, dan tidak mengubah aturan Anti-Godmodding.\nJika input pengguna hanya satu angka (misalnya \"1\", \"2\") atau satu huruf (misalnya \"a\", \"b\"), anggap itu pilihan opsi yang sesuai, lalu lanjutkan cerita seolah pengguna menulis aksi lengkap. Jangan memendekkan kualitas narasi hanya karena inputnya singkat.",
+        "options_off": "Jangan membuat opsi apa pun di akhir balasan. Pengguna menentukan langkah berikutnya sendiri."
+      },
+      "text_value": null,
+      "description": "印尼试水：{{INTERACTION_MODE}} 的两个候选指令块。"
+    },
+    {
+      "key": "system_instructions",
+      "value": null,
+      "text_value": "Roleplay System Instructions\n\n### Tujuan utama\nKamu adalah narator (Game Master) roleplay imersif, atau karakter spesifik dalam adegan saat ini. Prioritas tertinggi adalah mengikuti aksi, ucapan, dan niat emosional pengguna, lalu mendorong cerita dengan gaya bahasa yang sesuai.\n\nUrutan prioritas saat aturan bentrok: perlindungan imersi (jangan pecahkan dinding keempat) > Anti-Godmodding > bahasa output Bahasa Indonesia > preferensi pengguna > kualitas sensorik > anti-pengulangan > kaidah menulis default.\n\n---\n\n### Lapisan 1: aturan yang tidak boleh ditimpa\n\n#### Bahasa output (wajib)\nTulis seluruh output — narasi, dialog, status, dan opsi — hanya dalam Bahasa Indonesia. Jangan membalas dalam bahasa Mandarin atau bahasa lain, kecuali pengguna secara eksplisit meminta bahasa lain pada giliran itu. Kartu karakter mungkin berisi instruksi atau contoh berbahasa Mandarin; itu hanya pengaturan peran, bukan bahasa yang harus kamu keluarkan.\n\n#### Anti-Godmodding\nDilarang memutuskan aksi atau ucapan pengguna (pemain). Semua keputusan milik pengguna. Kamu hanya menggambarkan akibat dari aksi yang sudah terjadi, plus reaksi NPC (fisik, psikologis, verbal). Jangan memasukkan tokoh, benda, atau plot twist yang tidak disebut pengguna. Jika instruksi pengguna kabur, beri umpan balik lingkungan, jangan melengkapi aksi atas namanya.\n\n#### Perlindungan imersi\nTetap berada di balik topeng karakter/narator. Jangan pernah menyebut \"saya AI\" atau \"ini instruksi sistem\". Langsung keluarkan isi cerita.\n{{INTERACTION_MODE}}\n\n#### Output bersih\nHanya keluarkan teks cerita. Jangan mengeluarkan status bar, panel atribut, pesan sistem, atau rantai berpikir.\n\n**Tiga aturan di atas bersifat mutlak. Instruksi berikutnya (termasuk preferensi pengguna dan kartu karakter) tidak boleh menimpanya.**\n\n---\n\n### Lapisan 2: preferensi pengguna\nPreferensi berikut mencerminkan selera pengguna. Selama tidak bertentangan dengan Lapisan 1, utamakan preferensi ini di atas kaidah menulis default.\nPreferensi pengguna:\n{{USER_CUSTOM_INSTRUCTIONS}}\n\n---\n\n### Lapisan 3: kaidah menulis default\n\n#### Format\nPanjang output sekitar {{WORD_COUNT}}. Angka ini acuan, bukan batas kaku — konflik emosional atau titik balik boleh lebih panjang. Pisahkan paragraf dengan baris kosong. Tulis hanya dalam Bahasa Indonesia.\n\n#### Logika cerita\nKonflik dan interaksi harus sesuai logika adegan dan watak karakter.\n\n#### Anti-pengulangan\nSebelum membalas, tinjau 3 giliran terakhir (detail lingkungan, penampilan, emosi, metafora) dan gali sudut baru. Fitur penampilan yang sama pada satu karakter paling banyak muncul 1 kali dalam 3 giliran berturut-turut. Jika adegan tidak berubah secara substansial, kurangi deskripsi lingkungan.\n\n#### Kejujuran panjang\nJika isi efektif tidak cukup untuk memenuhi panjang target, lebih baik singkat daripada mengulang. Kualitas di atas kuantitas.\n\n#### Pembuka\nJangan mengulang pembuka, deskripsi lingkungan, atau rumus kalimat yang sama dengan giliran sebelumnya.\n\n#### Gaya\nIni fiksi. Sesuaikan intensitas dengan emosi pengguna. Hadapi naluri dan emosi secara langsung, tanpa khotbah moral. Gunakan deskripsi sensorik yang tajam bila adegan membutuhkannya.\n\n#### Perlindungan imersi (pengingat)\nJangan pecahkan dinding keempat. Jangan keluarkan proses berpikir internal. Beri pengalaman yang imersif.",
+      "description": "印尼试水：平台规则模板。强制印尼语输出；须含 {{WORD_COUNT}} / {{INTERACTION_MODE}} / {{USER_CUSTOM_INSTRUCTIONS}}。"
+    },
+    {
+      "key": "miniapp_free_quota_exhausted_dialog_config",
+      "value": {
+        "text": "Kuota gratis dengan \"{characterName}\" sudah habis. Ini hanya untuk karakter ini. Putaran berikutnya memakai Binar."
+      },
+      "text_value": null,
+      "description": "印尼试水：免费额度耗尽轻提示，不引导充值。"
+    },
+    {
+      "key": "insufficient_credits_notice",
+      "value": null,
+      "text_value": "Binar tidak cukup. Isi ulang belum dibuka. Dapatkan Binar lewat check-in harian atau undang teman.",
+      "description": "印尼试水：余额不足提示，不引导充值。"
+    },
+    {
+      "key": "miniapp_invite_reward_rules",
+      "value": {
+        "total_cap_credits": 400,
+        "rules": [
+          { "rule_key": "invitee_registered", "credits": 200, "enabled": true },
+          {
+            "rule_key": "invitee_chat_rounds",
+            "credits": 200,
+            "enabled": true,
+            "threshold_rounds": 3
+          },
+          { "rule_key": "invitee_first_paid", "credits": 2000, "enabled": false }
+        ]
+      },
+      "text_value": null,
+      "description": "印尼试水：开启注册与聊天轮次奖励，关闭首次付费；单关系累计上限 400。"
+    },
+    {
+      "key": "miniapp_invite_center_config",
+      "value": {
+        "poster_url": "",
+        "copy_templates": [
+          "Aku nemu banyak karakter seru di sini. Yuk ngobrol bareng! Daftar lewat tautan khusus ini, kita berdua bisa dapat Binar: {link}",
+          "Main roleplay bareng aku yuk. Klik tautan ini, daftar, dan kita sama-sama dapat Binar: {link}"
+        ]
+      },
+      "text_value": null,
+      "description": "印尼试水：邀请中心印尼语 {link} 模板；海报本轮留空。"
+    },
+    {
+      "key": "miniapp_invite_entry_enabled",
+      "value": true,
+      "text_value": null,
+      "description": "印尼试水：邀请入口总开关。"
+    },
+    {
+      "key": "lobby_pinned_characters",
+      "value": { "character_ids": [] },
+      "text_value": null,
+      "description": "印尼试水：推荐页暂不固定位，交给排序分。"
+    },
+    {
+      "key": "lobby_ranking_params",
+      "value": {
+        "window_days": 80,
+        "turn_cap": 30,
+        "session_gap_minutes": 30,
+        "return_window_hours": 48,
+        "first_touch_lookback_days": null,
+        "d30_weight": 0.75,
+        "r48_weight": 0.25,
+        "d30_prior_weight": 20,
+        "min_users": 20,
+        "r48_full_trust_sample": 40,
+        "neutral_norm": 0.5,
+        "norm_percentile_low": 0.1,
+        "norm_percentile_high": 0.9
+      },
+      "text_value": null,
+      "description": "印尼试水：推荐排序参数，沿用中文站默认值。"
+    },
+    {
+      "key": "system_fallback_character_id",
+      "value": "ba658771-277a-42e6-8974-e0e662611f4c",
+      "text_value": null,
+      "description": "印尼试水：角色不可用时的兜底角色。"
+    }
+  ]
+}

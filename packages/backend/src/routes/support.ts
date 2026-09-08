@@ -104,7 +104,9 @@ export default async function supportRoutes(app: FastifyInstance) {
       const body = (request.body ?? {}) as Partial<SendSupportMessageRequest>;
       const text = body.body?.trim() ?? '';
       if (!text || text.length > 4000 || !body.client_msg_id || !UUID_RE.test(body.client_msg_id)) {
-        return reply.status(400).send(fail('INVALID_MESSAGE', '消息内容或请求标识无效'));
+        return reply
+          .status(400)
+          .send(fail('INVALID_MESSAGE', 'Isi pesan atau ID permintaan tidak valid'));
       }
 
       const user = await getOrCreateDbUser(request.user);

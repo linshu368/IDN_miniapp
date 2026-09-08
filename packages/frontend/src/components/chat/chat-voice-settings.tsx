@@ -31,15 +31,15 @@ export function ChatVoiceSettings({ onOpenVoicePicker }: { onOpenVoicePicker: ()
     <div className="space-y-5">
       <ToolRow
         icon={Mic}
-        title="默认声音"
-        hint={currentVoiceLabel ?? '选择角色说话的声音'}
+        title="Suara default"
+        hint={currentVoiceLabel ?? 'Pilih suara karakter'}
         onClick={onOpenVoicePicker}
       />
 
       <section>
         <div className="mb-2 flex items-center gap-1.5">
           <Gauge className="size-3.5 text-muted-foreground" aria-hidden />
-          <h3 className="text-[13px] font-semibold text-foreground">播放速度</h3>
+          <h3 className="text-[13px] font-semibold text-foreground">Kecepatan putar</h3>
         </div>
         <div
           className="grid gap-2"
@@ -68,7 +68,7 @@ export function ChatVoiceSettings({ onOpenVoicePicker }: { onOpenVoicePicker: ()
           })}
         </div>
         <p className="mt-2 text-[11px] leading-snug text-muted-foreground">
-          对已生成的语音立即生效
+          Langsung berlaku untuk suara yang sudah ada
         </p>
       </section>
     </div>
@@ -98,7 +98,7 @@ export function ChatVoicePicker({ onPicked }: { onPicked: () => void }) {
   return (
     <div className="space-y-4">
       <p className="text-[11px] leading-snug text-muted-foreground">
-        只影响之后生成的语音，已生成的保持不变
+        Hanya untuk suara baru. Yang sudah jadi tidak berubah
       </p>
 
       {groups.map(([group, voices]) => (
@@ -146,7 +146,7 @@ function VoiceSettingsLoading() {
   return (
     <div className="flex justify-center py-10 text-[13px] text-muted-foreground">
       <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden />
-      加载中
+      Memuat
     </div>
   );
 }
@@ -158,8 +158,12 @@ function VoiceSettingsLoading() {
 function VoiceSettingsUnavailable() {
   return (
     <div className="rounded-2xl border border-dashed border-border bg-card/50 px-4 py-10 text-center">
-      <p className="text-[13px] font-semibold text-foreground">语音设置暂时打不开</p>
-      <p className="mt-1 text-[11px] text-muted-foreground">稍后再试，不影响正常聊天</p>
+      <p className="text-[13px] font-semibold text-foreground">
+        Pengaturan suara belum bisa dibuka
+      </p>
+      <p className="mt-1 text-[11px] text-muted-foreground">
+        Coba lagi nanti. Chat tetap bisa dipakai
+      </p>
     </div>
   );
 }

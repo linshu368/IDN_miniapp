@@ -101,13 +101,13 @@ function CustomVoicePageContent() {
   const rejectedCompositionTimerRef = useRef<number | null>(null);
 
   const showOverLimitError = () => {
-    setError(`自定义语音文字不能超过${maxChars}字`);
+    setError(`Teks suara kustom maksimal ${maxChars} karakter`);
   };
 
   const submit = () => {
     const custom = (textareaRef.current?.value ?? text).trim();
     if (!custom) {
-      setError('请先填写要生成语音的文字');
+      setError('Isi dulu teks yang mau diucapkan');
       return;
     }
     setError(null);
@@ -125,10 +125,10 @@ function CustomVoicePageContent() {
           }
           setError(
             code === 'CONFLICT'
-              ? '这条回复正在生成语音，请稍后再试'
+              ? 'Balasan ini sedang dibuat suaranya, coba lagi nanti'
               : code === 'VOICE_UNAVAILABLE'
-                ? '语音功能暂不可用'
-                : (mutationError as Error).message || '语音生成没能开始，请重试'
+                ? 'Fitur suara belum tersedia'
+                : (mutationError as Error).message || 'Gagal mulai generate suara, coba lagi'
           );
         },
       }
@@ -143,22 +143,23 @@ function CustomVoicePageContent() {
           size="icon"
           onClick={goBack}
           className="rounded-full text-muted-foreground hover:bg-secondary hover:text-foreground"
-          aria-label="返回"
+          aria-label="Kembali"
         >
           <ChevronLeft className="h-5 w-5" aria-hidden />
         </Button>
-        <h1 className="text-base font-bold tracking-wide">自定义本次语音</h1>
+        <h1 className="text-base font-bold tracking-wide">Kustom suara ini</h1>
       </header>
 
       <section className="flex-1 space-y-4 px-4 py-5">
         <p className="text-[12px] leading-relaxed text-muted-foreground">
-          只重新生成这一条语音，按你填写的文字来念。角色原回复、聊天记录和其他语音都不会改变。
+          Hanya generate ulang suara ini, sesuai teks yang kamu isi. Balasan karakter, riwayat chat,
+          dan suara lain tidak berubah.
         </p>
 
         {sessionVoice.isLoading ? (
           <div className="flex items-center justify-center py-16 text-[13px] text-muted-foreground">
             <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden />
-            加载中
+            Memuat
           </div>
         ) : (
           <div>
@@ -246,8 +247,8 @@ function CustomVoicePageContent() {
               }}
               rows={8}
               autoFocus
-              placeholder="想让这条语音说什么就写什么"
-              aria-label="自定义语音文字"
+              placeholder="Tulis apa yang mau diucapkan di suara ini"
+              aria-label="Teks suara kustom"
               aria-invalid={Boolean(error)}
               className="w-full resize-none rounded-xl border border-border bg-card px-3 py-2.5 text-[14px] leading-relaxed text-foreground placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
             />
@@ -264,7 +265,7 @@ function CustomVoicePageContent() {
       <div className="sticky bottom-0 border-t border-border bg-background/90 px-4 py-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] backdrop-blur-xl">
         {priceLabel ? (
           <p className="mb-2 text-center text-[11px] text-muted-foreground">
-            成功将消耗 {priceLabel}
+            Kalau berhasil, akan memakai {priceLabel}
           </p>
         ) : null}
         <Button
@@ -276,10 +277,10 @@ function CustomVoicePageContent() {
           {generateVoice.isPending ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden />
-              提交中
+              Mengirim
             </>
           ) : (
-            '生成本条语音'
+            'Generate suara ini'
           )}
         </Button>
       </div>

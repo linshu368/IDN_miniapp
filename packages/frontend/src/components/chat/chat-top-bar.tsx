@@ -28,10 +28,10 @@ export function ChatTopBar({ characterId, title, onOpenSessions }: ChatTopBarPro
 
   return (
     <header className="sticky top-0 z-20 flex items-center gap-0.5 border-b border-border/60 bg-background/95 px-2 py-2 pt-[calc(env(safe-area-inset-top)+0.5rem)] shadow-[0_1px_12px_rgba(15,23,42,0.04)] backdrop-blur-xl">
-      <IconButton label="返回大厅" onClick={() => router.push('/')}>
+      <IconButton label="Kembali ke lobby" onClick={() => router.push('/')}>
         <ChevronLeft className="size-5" strokeWidth={2.2} aria-hidden />
       </IconButton>
-      <IconButton label="对话记录" onClick={onOpenSessions} muted>
+      <IconButton label="Riwayat percakapan" onClick={onOpenSessions} muted>
         <PanelLeft className="size-[19px]" strokeWidth={2} aria-hidden />
       </IconButton>
 

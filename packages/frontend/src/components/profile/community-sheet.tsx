@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { CheckCircle2, ExternalLink, Loader2, Send } from 'lucide-react';
 import type { CommunityEntryData } from '@miniapp/shared';
+import { CREDITS_NAME } from '@/lib/locale';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetDescription, SheetTitle } from '@/components/ui/sheet';
 import { useVerifyCommunityMembershipMutation } from '@/lib/api/community';
@@ -26,15 +27,15 @@ export function CommunitySheet({
   const canManuallyVerify = community.claim_status === 'existing_member';
   const message =
     community.claim_status === 'ineligible' || status === 'ineligible'
-      ? '本奖励仅面向活动上线后新加入的成员。'
+      ? 'Hadiah ini hanya untuk member yang baru gabung setelah event dimulai.'
       : status === 'disabled'
-        ? '活动当前未开放，暂时无法领取奖励。'
+        ? 'Event sedang tidak dibuka, hadiah belum bisa diambil.'
         : status === 'pending'
-          ? '入群申请仍在等待审批，请通过后再验证。'
+          ? 'Permintaan gabung masih menunggu persetujuan. Verifikasi setelah disetujui.'
           : status === 'not_member'
-            ? '尚未检测到入群，请完成加入后重试。'
+            ? 'Belum terdeteksi masuk grup. Gabung dulu, lalu coba lagi.'
             : verify.isError
-              ? '验证暂时失败，请稍后重试。'
+              ? 'Verifikasi gagal, coba lagi nanti.'
               : null;
   useEffect(() => {
     if (!open) {
@@ -60,7 +61,7 @@ export function CommunitySheet({
         {rewarded ? (
           <div className="mt-4 flex items-center gap-2 rounded-2xl bg-emerald-500/10 p-4 text-sm font-bold text-emerald-400">
             <CheckCircle2 className="h-5 w-5" />
-            奖励已到账
+            {CREDITS_NAME} sudah masuk
           </div>
         ) : null}
         {message ? (
@@ -70,7 +71,7 @@ export function CommunitySheet({
         ) : null}
         {openFailed ? (
           <div className="mt-4 rounded-2xl border border-border bg-secondary p-4 text-sm text-muted-foreground">
-            未能打开社群，请在 Telegram 搜索完整账号{' '}
+            Komunitas tidak bisa dibuka. Cari akun lengkap di Telegram{' '}
             <strong className="text-foreground">{community.fallback_handle}</strong>
           </div>
         ) : null}
@@ -83,7 +84,7 @@ export function CommunitySheet({
             className="h-12 rounded-2xl"
           >
             <ExternalLink className="mr-2 h-4 w-4" />
-            打开官方社群
+            Buka komunitas resmi
           </Button>
           {canManuallyVerify && !rewarded && !ineligible ? (
             <Button
@@ -93,7 +94,7 @@ export function CommunitySheet({
               className="h-12 rounded-2xl"
             >
               {verify.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-              {verify.isPending ? '正在验证' : '我已加入，立即验证'}
+              {verify.isPending ? 'Memverifikasi' : 'Sudah gabung, verifikasi sekarang'}
             </Button>
           ) : null}
         </div>

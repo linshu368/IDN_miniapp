@@ -314,7 +314,7 @@ async function sendMessageScenario(context: MvpScenarioContext): Promise<Scenari
   checker.expect('system 段是角色卡 system_prompt', messageText(sent[0]), CHARACTER_SYSTEM_PROMPT);
   checker.expect('历史里开场白只出现一次', openingOccurrences, 1);
   checker.expect('最后一条是 user', sent[sent.length - 1]?.role, 'user');
-  checker.expectTrue('最后一条包含平台规则包装', lastSent.includes('##系统指令'));
+  checker.expectTrue('最后一条包含平台规则包装', lastSent.includes('##Instruksi sistem'));
   checker.expectTrue('最后一条包含本轮用户输入', lastSent.includes(userInput));
   checker.expect(
     '上游收到的模型',

@@ -1,5 +1,6 @@
 import { getDomainDb } from '../../../lib/supabase.js';
 import {
+  CREDITS_NAME,
   DEFAULT_PAYMENT_PROMPT_DIALOG_CONFIG,
   DEFAULT_RECHARGE_PAGE_CONFIG,
   PaymentPlansSchema,
@@ -16,7 +17,7 @@ export const PAYMENT_PROMPT_DIALOG_CONFIG_KEY = 'miniapp_payment_prompt_dialog_c
 export const INSUFFICIENT_CREDITS_NOTICE_CONFIG_KEY = 'insufficient_credits_notice';
 export const ORDER_EXPIRE_MS = 15 * 60 * 1000;
 
-const DEFAULT_INSUFFICIENT_CREDITS_NOTICE = '当前星尘积分不足，需要先购买积分才能继续聊天。';
+const DEFAULT_INSUFFICIENT_CREDITS_NOTICE = `${CREDITS_NAME} tidak cukup. Isi ulang belum dibuka. Dapatkan ${CREDITS_NAME} lewat check-in harian atau undang teman.`;
 
 export class PaymentPlansConfigError extends Error {
   constructor(message: string) {

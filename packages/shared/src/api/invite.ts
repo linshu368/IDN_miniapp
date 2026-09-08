@@ -19,8 +19,12 @@ export const INVITE_SOURCE_ID = 'invite';
 export interface InviteEntryStatusData {
   /** 运营总开关（miniapp_invite_entry_enabled）；false 时隐藏全部邀请入口。 */
   entry_enabled: boolean;
-  /** 用户是否已首次进入过邀请中心；false 时入口展示"2200星尘"提醒标签。 */
+  /** 用户是否已首次进入过邀请中心；false 时入口展示奖励上限提醒标签。 */
   center_entered: boolean;
+  /** 已发布规则的单关系累计上限；缺失时前端不展示具体数字。 */
+  total_cap_credits: number | null;
+  /** invitee_chat_rounds 的达标轮数；缺失时前端回落 3。 */
+  chat_rounds_threshold: number | null;
 }
 
 /** POST /api/invite/center-view —— 进入邀请中心（副作用：懒生成邀请码、标记首次进入）。 */

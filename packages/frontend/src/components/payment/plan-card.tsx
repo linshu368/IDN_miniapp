@@ -5,6 +5,7 @@ import type { PaymentPlan, PaymentPlanVariant } from '@miniapp/shared';
 
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
+import { CREDITS_NAME } from '@/lib/locale';
 import { bonusPercent, formatNumber, formatYuan, formatYuanShort } from '@/lib/utils/payment';
 
 interface PlanCardProps {
@@ -101,7 +102,7 @@ export function PlanCard({ plan, selected, selectedColor, badgeColor, onSelect }
     if (plan.variant === 'standard' && percent > 0) {
       return (
         <span className="rounded border border-rose/50 bg-rose/10 px-1 text-[9px] font-bold text-rose">
-          +{percent}% 赠送
+          +{percent}% bonus
         </span>
       );
     }
@@ -160,7 +161,7 @@ export function PlanCard({ plan, selected, selectedColor, badgeColor, onSelect }
               >
                 {formatNumber(displayCredits)}
               </span>
-              <span className="text-[10px] text-muted-foreground">星尘</span>
+              <span className="text-[10px] text-muted-foreground">{CREDITS_NAME}</span>
               {inlineChip}
             </div>
 
@@ -174,7 +175,7 @@ export function PlanCard({ plan, selected, selectedColor, badgeColor, onSelect }
                     </span>
                     {percent > 0 ? (
                       <span className="rounded-[4px] bg-rose/20 px-1.5 py-0.5 text-[10px] font-bold text-rose">
-                        多送 {percent}%
+                        Bonus extra {percent}%
                       </span>
                     ) : null}
                   </>

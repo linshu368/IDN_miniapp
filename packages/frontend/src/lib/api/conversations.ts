@@ -8,6 +8,8 @@ import type {
   ListConversationsData,
   UpdateConversationData,
 } from '@miniapp/shared';
+import { DISPLAY_NAME_MAX_LENGTH } from '@miniapp/shared';
+import { truncateDisplayName } from '@/lib/locale';
 import { apiClient } from './client';
 
 export const conversationKeys = {
@@ -136,19 +138,17 @@ export function useDeleteConversationMutation() {
 }
 
 /** 顶栏、会话抽屉、历史列表统一只展示这么多字 */
-export const SESSION_TITLE_DISPLAY_LENGTH = 7;
-const DEFAULT_DISPLAY_TITLE = '新的对话';
+export const SESSION_TITLE_DISPLAY_LENGTH = DISPLAY_NAME_MAX_LENGTH;
+const DEFAULT_DISPLAY_TITLE = 'Obrolan baru';
 
 /**
  * 会话标题展示：优先用已存 title，缺省时用 fallback（通常是角色名）。
- * 一律截到 SESSION_TITLE_DISPLAY_LENGTH 个字符；不再用消息预览当标题。
+ * 一律截到 SESSION_TITLE_DISPLAY_LENGTH 个字符并加省略号；不再用消息预览当标题。
  */
 export function resolveSessionTitle(
   title: string | null | undefined,
   fallback?: string | null
 ): string {
   const source = title?.trim() || fallback?.trim() || DEFAULT_DISPLAY_TITLE;
-  const chars = Array.from(source);
-  if (chars.length <= SESSION_TITLE_DISPLAY_LENGTH) return source;
-  return chars.slice(0, SESSION_TITLE_DISPLAY_LENGTH).join('');
+  return truncateDisplayName(source, SESSION_TITLE_DISPLAY_LENGTH);
 }

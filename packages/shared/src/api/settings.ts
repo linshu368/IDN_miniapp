@@ -18,7 +18,7 @@ export type AvatarSource = 'custom' | 'telegram' | 'default';
  * 各环境的 Supabase 项目不同，生产必须通过环境变量覆盖，见 resolveDefaultUserAvatarUrl。
  */
 export const DEFAULT_USER_AVATAR_URL =
-  'https://zoqelpfhurwehlvypryl.supabase.co/storage/v1/object/public/miniapp-user-avatars/default_user_avatar/default-user-avatar-20260713.png';
+  'https://bklxvrrtccphrtnpqulh.supabase.co/storage/v1/object/public/miniapp-user-avatars/default_user_avatar/default-user-avatar-20260713.png';
 
 /**
  * 解析平台默认头像地址。各端把自己的环境变量传进来，空值回退到测试环境地址。

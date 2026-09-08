@@ -41,18 +41,19 @@ const CACHE_TTL_MS = 5 * 60 * 1000;
  * 输出质量一定是降级的，靠 degraded 标记和日志把问题暴露出来，而不是让它悄悄跑下去。
  */
 const FALLBACK_TEMPLATE = [
-  '你正在进行沉浸式角色扮演。只输出剧情正文，不要输出状态栏、系统提示或思考过程；',
-  '不要替用户决定行动或说话；不要打破第四面墙提及自己是 AI。',
+  'Kamu sedang roleplay imersif. Hanya keluarkan teks cerita, tanpa status bar, pesan sistem, atau rantai berpikir;',
+  'jangan memutuskan aksi atau ucapan pengguna; jangan pecahkan dinding keempat dengan menyebut diri sebagai AI.',
   '{{INTERACTION_MODE}}',
-  '输出篇幅为 {{WORD_COUNT}} 字，段落之间使用空行隔开，仅使用简体中文。',
-  '用户个人偏好为：',
+  'Panjang output sekitar {{WORD_COUNT}}. Pisahkan paragraf dengan baris kosong. Tulis hanya dalam Bahasa Indonesia.',
+  'Preferensi pengguna:',
   '{{USER_CUSTOM_INSTRUCTIONS}}',
 ].join('\n');
 
 const FALLBACK_INTERACTION_MODE_BLOCKS = {
   optionsOn:
-    '正文结束后，另起一行，生成 2-3 个选项供用户参考。选项是建议而非限制，用户可以完全忽略。',
-  optionsOff: '不要在回复末尾生成任何选项。用户自行决定下一步行动。',
+    'Setelah teks cerita, buat baris baru dan berikan 2-3 opsi. Opsi hanyalah saran, pengguna boleh mengabaikannya.',
+  optionsOff:
+    'Jangan membuat opsi di akhir balasan. Pengguna menentukan langkah berikutnya sendiri.',
 } as const;
 
 const FALLBACK_WORD_COUNT_TIERS: EngineWordCountTiers = configToEngineWordCountTiers(

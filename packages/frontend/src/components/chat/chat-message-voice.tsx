@@ -78,7 +78,7 @@ export function ChatMessageVoiceFooter({
   return (
     <div className="space-y-1.5">
       <div className="flex items-center gap-1">
-        <span className="text-[11px] text-muted-foreground/70">{charCount} 字</span>
+        <span className="text-[11px] text-muted-foreground/70">{charCount} karakter</span>
         {audioUrl ? null : <VoiceAction {...voice} />}
         {regenerate}
       </div>
@@ -122,13 +122,15 @@ function SpokenTextPanel({ text, customHref }: { text: string; customHref: strin
 
   return (
     <div className="w-full max-w-[300px] space-y-1.5 rounded-xl border border-border bg-card/60 px-2.5 py-2">
-      <p className="text-[10px] font-medium text-muted-foreground/70">本次语音文字</p>
+      <p className="text-[10px] font-medium text-muted-foreground/70">Teks suara ini</p>
       {hasText ? (
         <p className="whitespace-pre-wrap break-words text-[12px] leading-relaxed text-foreground/90">
           {text}
         </p>
       ) : (
-        <p className="text-[12px] text-muted-foreground/70">这条语音生成时还没有记录文字</p>
+        <p className="text-[12px] text-muted-foreground/70">
+          Suara ini tidak punya teks saat digenerate
+        </p>
       )}
       {customHref ? (
         <Link
@@ -136,7 +138,7 @@ function SpokenTextPanel({ text, customHref }: { text: string; customHref: strin
           className="flex items-center gap-1 pt-0.5 text-[11px] font-medium text-primary transition-opacity hover:opacity-80"
         >
           <Pencil className="size-3" aria-hidden />
-          自定义本次语音
+          Kustom suara ini
         </Link>
       ) : null}
     </div>
@@ -150,7 +152,7 @@ function VoiceAction({ voice, submitting, onGenerate, priceLabel }: MessageVoice
     return (
       <span className="flex items-center gap-1.5 rounded-full px-2 py-1 text-[11px] font-medium text-muted-foreground">
         <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden />
-        生成中
+        Sedang generate
       </span>
     );
   }
@@ -164,7 +166,7 @@ function VoiceAction({ voice, submitting, onGenerate, priceLabel }: MessageVoice
       className="flex items-center gap-1.5 rounded-full px-2 py-1 text-[11px] font-medium text-primary transition-colors hover:bg-secondary hover:text-foreground"
     >
       <AudioLines className="h-3.5 w-3.5" aria-hidden />
-      {isRetry ? '重试语音' : '生成语音'}
+      {isRetry ? 'Coba lagi suara' : 'Generate suara'}
       {priceLabel ? <span className="text-primary/80">· {priceLabel}</span> : null}
     </button>
   );
@@ -245,7 +247,7 @@ function VoiceBar({
       <button
         type="button"
         onClick={toggle}
-        aria-label={playing ? '暂停' : '播放'}
+        aria-label={playing ? 'Jeda' : 'Putar'}
         className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors hover:bg-primary/20"
       >
         {playing ? (
@@ -262,7 +264,7 @@ function VoiceBar({
         step={0.1}
         value={position}
         disabled={!seekable}
-        aria-label="播放进度"
+        aria-label="Progres putar"
         onChange={(event) => {
           const next = Number(event.target.value);
           setPosition(next);
@@ -284,7 +286,7 @@ function VoiceBar({
       <button
         type="button"
         onClick={onRegenerate}
-        aria-label="重新生成语音"
+        aria-label="Generate ulang suara"
         className="flex size-5 shrink-0 items-center justify-center rounded-full text-muted-foreground/70 transition-colors hover:bg-secondary hover:text-foreground"
       >
         <RefreshCw className="size-3" aria-hidden />

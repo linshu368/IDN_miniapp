@@ -1,6 +1,8 @@
 // MiniApp 钱包领域的前后端共享契约
 import { z } from 'zod';
 
+import { CREDITS_NAME } from '../market-locale.js';
+
 /** runtime_config key：用户与单张角色卡的免费对话轮次上限。 */
 export const CHARACTER_FREE_CHAT_QUOTA_LIMIT_CONFIG_KEY = 'miniapp_character_free_chat_quota_limit';
 
@@ -22,7 +24,7 @@ export const FreeQuotaExhaustedDialogConfigSchema = z.object({
 export type FreeQuotaExhaustedDialogConfig = z.infer<typeof FreeQuotaExhaustedDialogConfigSchema>;
 
 export const DEFAULT_FREE_QUOTA_EXHAUSTED_DIALOG_CONFIG: FreeQuotaExhaustedDialogConfig = {
-  text: '和「{characterName}」的免费轮次用完了。这是这张卡的免费额度，其他角色不受影响。往后每轮消耗星尘。',
+  text: `Kuota gratis dengan "{characterName}" sudah habis. Ini hanya untuk karakter ini. Putaran berikutnya memakai ${CREDITS_NAME}.`,
 };
 
 // ==== GET /api/wallet/balance ====

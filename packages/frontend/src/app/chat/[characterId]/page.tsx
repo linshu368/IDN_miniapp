@@ -299,10 +299,10 @@ export default function SelfHostedChatPage() {
             }
             setStreamError(
               code === 'CONFLICT'
-                ? '这条回复正在生成语音'
+                ? 'Balasan ini sedang dibuat suaranya'
                 : code === 'VOICE_UNAVAILABLE'
-                  ? '语音功能暂不可用'
-                  : '语音生成没能开始，请重试'
+                  ? 'Fitur suara belum tersedia'
+                  : 'Gagal mulai generate suara, coba lagi'
             );
           },
         }
@@ -362,7 +362,7 @@ export default function SelfHostedChatPage() {
       if (aborted) return;
 
       if (!(error instanceof ConversationStreamError)) {
-        setStreamError('网络异常，请重试');
+        setStreamError('Jaringan error, coba lagi');
         restoreDraft(input);
         return;
       }
@@ -375,22 +375,22 @@ export default function SelfHostedChatPage() {
         }
         case 'session_not_found':
           setSessionId(null);
-          setStreamError('这段对话已不存在，已为你开启新的对话');
+          setStreamError('Percakapan ini sudah tidak ada. Kami buatkan yang baru.');
           restoreDraft(input);
           return;
         case 'character_not_found':
-          setStreamError('这个角色已下架');
+          setStreamError('Karakter ini sudah dinonaktifkan');
           window.setTimeout(goBack, 1_200);
           return;
         case 'session_busy':
-          setStreamError('上一条还在生成，请稍候');
+          setStreamError('Balasan sebelumnya masih dibuat, tunggu sebentar');
           restoreDraft(input);
           return;
         case 'regenerate_not_allowed':
-          setStreamError('这条回复不能重新生成了');
+          setStreamError('Balasan ini tidak bisa dibuat ulang');
           return;
         default:
-          setStreamError(error.message || '生成失败，请重试');
+          setStreamError(error.message || 'Gagal generate, coba lagi');
           restoreDraft(input);
       }
     },
@@ -501,7 +501,7 @@ export default function SelfHostedChatPage() {
       setEarlier((current) => [...page.messages, ...current]);
       setHasMoreEarlier(page.has_more);
     } catch {
-      setStreamError('更早的消息没能加载出来');
+      setStreamError('Pesan sebelumnya gagal dimuat');
     } finally {
       setLoadingEarlier(false);
     }
@@ -527,9 +527,9 @@ export default function SelfHostedChatPage() {
 
   // 进入失败要能重试。session_not_found 不算失败——上面的分支会自动重建一个新会话
   const entryError = createConversation.isError
-    ? '对话创建失败，请重试'
+    ? 'Gagal membuat percakapan, coba lagi'
     : conversationQuery.isError && !detailErrorCode
-      ? '对话加载失败，请重试'
+      ? 'Gagal memuat percakapan, coba lagi'
       : null;
 
   const title = resolveSessionTitle(conversationQuery.data?.session.title, character?.name);
@@ -603,7 +603,9 @@ export default function SelfHostedChatPage() {
                     pending={false}
                     disabled={generating}
                     label={
-                      getChatReplyPresentation(message) === 'complete' ? '换一个回复' : '重新回复'
+                      getChatReplyPresentation(message) === 'complete'
+                        ? 'Balasan lain'
+                        : 'Buat ulang'
                     }
                   />
                 ) : null
@@ -620,7 +622,7 @@ export default function SelfHostedChatPage() {
           <button
             type="button"
             onClick={() => setStreamError(null)}
-            aria-label="关闭提示"
+            aria-label="Tutup"
             className="shrink-0 text-destructive/70 hover:text-destructive"
           >
             <X className="h-3.5 w-3.5" aria-hidden />

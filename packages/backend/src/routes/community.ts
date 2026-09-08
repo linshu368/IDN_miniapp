@@ -60,7 +60,7 @@ export default async function communityRoutes(app: FastifyInstance) {
         ];
     if (claim.error || exclusion.error) {
       request.log.error({ err: claim.error ?? exclusion.error }, '[community] entry query failed');
-      return reply.status(500).send(fail('INTERNAL', '查询奖励失败'));
+      return reply.status(500).send(fail('INTERNAL', 'Gagal memuat hadiah'));
     }
     return reply.send(
       ok<CommunityEntryData>({
@@ -92,7 +92,7 @@ export default async function communityRoutes(app: FastifyInstance) {
           })
         );
       if (!config.telegramCommunityBotToken)
-        return reply.status(503).send(fail('UNAVAILABLE', '社群验证暂不可用'));
+        return reply.status(503).send(fail('UNAVAILABLE', 'Verifikasi komunitas belum tersedia'));
       const user = await getOrCreateDbUser(request.user);
       try {
         const member = await getCommunityMemberStatus(
@@ -136,7 +136,9 @@ export default async function communityRoutes(app: FastifyInstance) {
         );
       } catch (err) {
         request.log.error({ err }, '[community] verify failed');
-        return reply.status(502).send(fail('UPSTREAM', '社群验证失败，请稍后重试'));
+        return reply
+          .status(502)
+          .send(fail('UPSTREAM', 'Verifikasi komunitas gagal. Coba lagi nanti.'));
       }
     }
   );

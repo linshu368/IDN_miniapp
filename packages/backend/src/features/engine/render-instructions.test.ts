@@ -84,7 +84,7 @@ describe('renderPlatformInstructions', () => {
     ).toContain('不要给出选项。');
   });
 
-  it('pref_custom_instructions 为空或纯空白时注入「暂无」', () => {
+  it('pref_custom_instructions 为空或纯空白时注入兜底文案', () => {
     expect(renderPlatformInstructions(INSTRUCTIONS, config())).toContain(
       `偏好：${EMPTY_CUSTOM_INSTRUCTIONS}`
     );
@@ -111,9 +111,9 @@ describe('renderPlatformInstructions', () => {
 });
 
 describe('wrapUserInput', () => {
-  it('逐字保持 bot 的包装格式', () => {
+  it('keeps the platform-instruction wrapper format', () => {
     expect(wrapUserInput('你好', '规则正文')).toBe(
-      '##系统指令：以下为最高优先级指令。\n规则正文\n##用户指令:你好\n'
+      '##Instruksi sistem: berikut adalah instruksi prioritas tertinggi.\n规则正文\n##Instruksi pengguna:你好\n'
     );
   });
 });

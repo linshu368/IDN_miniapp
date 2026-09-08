@@ -2,26 +2,26 @@ import { describe, expect, it } from 'vitest';
 import { formatFreeQuotaExhaustedNotice, truncateCharacterName } from './free-quota-dialog';
 
 describe('free quota exhausted notice copy', () => {
-  it('keeps character names up to seven characters', () => {
-    expect(truncateCharacterName('七个字的角色名')).toBe('七个字的角色名');
+  it('keeps character names up to 16 characters', () => {
+    expect(truncateCharacterName('Karakter Pendek')).toBe('Karakter Pendek');
   });
 
-  it('limits long character names to seven displayed characters', () => {
-    expect(truncateCharacterName('这是一个很长的角色名字')).toBe('这是一个很长…');
+  it('limits long character names to 16 displayed characters plus ellipsis', () => {
+    expect(truncateCharacterName('Nama karakter yang sangat panjang')).toBe('Nama karakter ya…');
   });
 
   it('uses a safe fallback for missing character names', () => {
-    expect(truncateCharacterName('  ')).toBe('当前角色');
+    expect(truncateCharacterName('  ')).toBe('Karakter ini');
   });
 
   it('replaces the character placeholder in runtime copy', () => {
     expect(
       formatFreeQuotaExhaustedNotice(
         {
-          text: '和「{characterName}」的免费轮次用完了。往后每轮消耗星尘。',
+          text: 'Kuota gratis dengan "{characterName}" sudah habis.',
         },
-        '非常非常长的角色名字'
+        'Nama karakter yang sangat panjang'
       )
-    ).toBe('和「非常非常长的…」的免费轮次用完了。往后每轮消耗星尘。');
+    ).toBe('Kuota gratis dengan "Nama karakter ya…" sudah habis.');
   });
 });

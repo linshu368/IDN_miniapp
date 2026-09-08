@@ -12,15 +12,19 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { paymentKeys, usePaymentOrderQuery, usePaymentPlansQuery } from '@/lib/api/payment';
 import { isMarketFeatureEnabled } from '@/lib/market-features';
+import { CREDITS_NAME } from '@/lib/locale';
 import {
   formatCountdown,
   formatNumber,
   formatYuanShort,
-  paymentTypeLabel,
   remainingSeconds,
   safePaymentReturnTo,
 } from '@/lib/utils/payment';
 import { openPaymentUrl, useHaptic, useTelegramBackButton } from '@/lib/telegram';
+
+function paymentTypeLabel(type: PaymentOrder['payment_type']): string {
+  return type === 'alipay' ? 'Alipay' : 'WeChat';
+}
 
 export default function PaymentPendingPage() {
   if (!isMarketFeatureEnabled('payment')) {
@@ -106,7 +110,7 @@ function PaymentPendingPageContent() {
   if (isError || !order) {
     return (
       <Screen>
-        <ErrorView onBack={goBack} message="订单不存在或加载失败" />
+        <ErrorView onBack={goBack} message="Pesanan tidak ada atau gagal dimuat" />
       </Screen>
     );
   }
@@ -119,7 +123,7 @@ function PaymentPendingPageContent() {
           size="icon"
           onClick={goBack}
           className="-ml-2 rounded-full text-muted-foreground hover:text-foreground"
-          aria-label="返回"
+          aria-label="Kembali"
         >
           <ChevronLeft className="h-5 w-5" aria-hidden />
         </Button>
@@ -163,7 +167,7 @@ function LoadingView() {
   return (
     <div className="flex flex-1 items-center justify-center p-10 text-muted-foreground">
       <Loader2 className="mr-2 h-5 w-5 animate-spin" aria-hidden />
-      加载中
+      Memuat
     </div>
   );
 }
@@ -178,7 +182,7 @@ function ErrorView({ onBack, message }: { onBack: () => void; message: string })
         onClick={onBack}
         className="px-6 border-border text-muted-foreground hover:bg-secondary"
       >
-        返回
+        Kembali
       </Button>
     </div>
   );
@@ -208,21 +212,21 @@ function PendingView({
       </div>
 
       <div className="text-center">
-        <h1 className="text-xl font-bold">正在等待支付</h1>
+        <h1 className="text-xl font-bold">Menunggu pembayaran</h1>
         <p className="mt-1 text-sm text-muted-foreground">{arrivalHint}</p>
       </div>
 
       <div className="w-full rounded-2xl border border-border bg-card p-5">
-        <Row label="实付金额" value={`¥ ${formatYuanShort(order.amount_cents)}`} bold />
-        <Row label="将到账" value={`${formatNumber(total)} 星尘`} />
-        <Row label="支付方式" value={paymentTypeLabel(order.payment_type)} />
+        <Row label="Jumlah dibayar" value={`¥ ${formatYuanShort(order.amount_cents)}`} bold />
+        <Row label="Akan masuk" value={`${formatNumber(total)} ${CREDITS_NAME}`} />
+        <Row label="Metode bayar" value={paymentTypeLabel(order.payment_type)} />
         <Row
-          label="订单号"
+          label="No. pesanan"
           value={<span className="font-mono text-[11px] text-muted-foreground">{order.id}</span>}
         />
         <div className="mt-3 flex items-center justify-between border-t border-border pt-3">
           <span className="flex items-center gap-1 text-xs text-muted-foreground">
-            <Clock className="h-3 w-3" aria-hidden /> 订单剩余
+            <Clock className="h-3 w-3" aria-hidden /> Sisa waktu
           </span>
           <span
             className={cn(
@@ -240,7 +244,7 @@ function PendingView({
           onClick={() => openPaymentUrl(payUrl)}
           className="h-12 w-full rounded-xl bg-primary font-bold text-primary-foreground shadow-lg shadow-[0_10px_30px_hsl(var(--glow)/0.4)] hover:opacity-90 border-0"
         >
-          重新打开支付页
+          Buka ulang halaman bayar
         </Button>
       ) : null}
 
@@ -249,11 +253,11 @@ function PendingView({
         onClick={onBack}
         className="h-11 w-full rounded-xl border-border text-muted-foreground hover:bg-secondary"
       >
-        暂不支付，返回星尘商店
+        Nanti dulu, kembali ke toko {CREDITS_NAME}
       </Button>
 
       <div className="text-center text-[11px] text-muted-foreground/70">
-        支付完成后会自动跳转；若未自动跳转请稍候
+        Setelah bayar, halaman akan berpindah otomatis. Kalau belum, tunggu sebentar
       </div>
     </div>
   );
@@ -279,35 +283,37 @@ function CompletedView({
       </div>
 
       <div className="text-center">
-        <h1 className="text-2xl font-bold">支付成功</h1>
-        <p className="mt-2 text-sm text-muted-foreground">星尘已到账，尽情探索吧</p>
+        <h1 className="text-2xl font-bold">Berhasil</h1>
+        <p className="mt-2 text-sm text-muted-foreground">
+          {CREDITS_NAME} sudah masuk, silakan jelajahi
+        </p>
       </div>
 
       <div className="flex flex-col items-center gap-1">
-        <span className="text-xs text-muted-foreground">本次到账</span>
+        <span className="text-xs text-muted-foreground">{CREDITS_NAME} masuk kali ini</span>
         <div className="flex items-baseline gap-1">
           <span className="bg-gradient-to-b from-foreground to-primary bg-clip-text text-4xl font-black text-transparent">
             +{formatNumber(total)}
           </span>
-          <span className="text-xs text-muted-foreground">星尘</span>
+          <span className="text-xs text-muted-foreground">{CREDITS_NAME}</span>
         </div>
         {order.bonus_credits > 0 ? (
           <span className="rounded border border-rose/50 bg-rose/10 px-2 py-0.5 text-[10px] font-bold text-rose">
-            含赠送 {formatNumber(order.bonus_credits)}
+            Termasuk bonus {formatNumber(order.bonus_credits)}
           </span>
         ) : null}
       </div>
 
       <div className="w-full rounded-2xl border border-border bg-card p-5">
-        <Row label="实付金额" value={`¥ ${formatYuanShort(order.amount_cents)}`} bold />
-        <Row label="支付方式" value={paymentTypeLabel(order.payment_type)} />
+        <Row label="Jumlah dibayar" value={`¥ ${formatYuanShort(order.amount_cents)}`} bold />
+        <Row label="Metode bayar" value={paymentTypeLabel(order.payment_type)} />
         <Row
-          label="订单号"
+          label="No. pesanan"
           value={<span className="font-mono text-[11px] text-muted-foreground">{order.id}</span>}
         />
         {order.provider_transaction_id ? (
           <Row
-            label="渠道流水"
+            label="ID transaksi"
             value={
               <span className="font-mono text-[11px] text-muted-foreground">
                 {order.provider_transaction_id}
@@ -323,13 +329,13 @@ function CompletedView({
           onClick={onOrders}
           className="flex-1 h-11 rounded-xl border-border text-muted-foreground hover:bg-secondary"
         >
-          查看订单
+          Lihat pesanan
         </Button>
         <Button
           onClick={onHome}
           className="flex-1 h-11 rounded-xl bg-primary font-bold text-primary-foreground shadow-lg shadow-[0_10px_30px_hsl(var(--glow)/0.3)] hover:opacity-90 border-0"
         >
-          继续探索
+          Lanjut jelajah
         </Button>
       </div>
     </div>
@@ -352,16 +358,20 @@ function TerminalView({
         <XCircle className="h-10 w-10" aria-hidden />
       </div>
       <div className="text-center">
-        <h1 className="text-xl font-bold">{isExpired ? '订单已过期' : '支付失败'}</h1>
+        <h1 className="text-xl font-bold">
+          {isExpired ? 'Pesanan kedaluwarsa' : 'Pembayaran gagal'}
+        </h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          {isExpired ? '未在 15 分钟内完成支付，可以重新下单' : '请返回重新发起支付'}
+          {isExpired
+            ? 'Pembayaran tidak selesai dalam 15 menit. Kamu bisa pesan ulang'
+            : 'Kembali dan mulai pembayaran lagi'}
         </p>
       </div>
       <div className="w-full rounded-2xl border border-border bg-card p-5">
-        <Row label="订单金额" value={`¥ ${formatYuanShort(order.amount_cents)}`} bold />
-        <Row label="支付方式" value={paymentTypeLabel(order.payment_type)} />
+        <Row label="Jumlah pesanan" value={`¥ ${formatYuanShort(order.amount_cents)}`} bold />
+        <Row label="Metode bayar" value={paymentTypeLabel(order.payment_type)} />
         <Row
-          label="订单号"
+          label="No. pesanan"
           value={<span className="font-mono text-[11px] text-muted-foreground">{order.id}</span>}
         />
       </div>
@@ -369,14 +379,14 @@ function TerminalView({
         onClick={onRetry}
         className="h-11 w-full rounded-xl bg-primary font-bold text-primary-foreground shadow-lg shadow-[0_10px_30px_hsl(var(--glow)/0.3)] hover:opacity-90 border-0"
       >
-        重新下单
+        Pesan ulang
       </Button>
       <Button
         variant="outline"
         onClick={onBack}
         className="h-11 w-full rounded-xl border-border text-muted-foreground hover:bg-secondary"
       >
-        返回星尘商店
+        Kembali ke toko {CREDITS_NAME}
       </Button>
     </div>
   );

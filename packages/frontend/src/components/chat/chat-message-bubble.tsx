@@ -3,6 +3,7 @@
 import type { ReactNode } from 'react';
 import type { ChatMessage } from '@miniapp/shared';
 
+import { CREDITS_NAME } from '@/lib/locale';
 import { cn } from '@/lib/utils';
 import { ChatMarkdown } from './chat-markdown';
 import { getChatReplyPresentation } from './chat-reply-presentation';
@@ -77,11 +78,13 @@ export function ChatMessageBubble({
               aria-hidden
             />
           ) : null}
-          {stalled ? <ReplyNotice>TA 回应得有点久，再等一会儿。</ReplyNotice> : null}
+          {stalled ? <ReplyNotice>Masih ngetik. Tunggu sebentar.</ReplyNotice> : null}
           {presentation === 'incomplete' && message.finish_reason === 'content_filter' ? (
-            <ReplyNotice>回复停在这里了，可以重新回复。本次未扣星尘。</ReplyNotice>
+            <ReplyNotice>
+              Balasan terhenti. Kamu bisa buat ulang. {CREDITS_NAME} tidak dipotong.
+            </ReplyNotice>
           ) : presentation === 'empty' ? (
-            <ReplyNotice>TA 刚才没能回应，可以再试一次。本次未扣星尘。</ReplyNotice>
+            <ReplyNotice>Gagal merespons. Coba lagi. {CREDITS_NAME} tidak dipotong.</ReplyNotice>
           ) : null}
           {quotaExhaustedNotice ? <ReplyNotice>{quotaExhaustedNotice}</ReplyNotice> : null}
         </div>
@@ -117,7 +120,7 @@ export function ChatTypingBubble({
             />
           ))}
         </div>
-        {stalled ? <ReplyNotice>TA 回应得有点久，再等一会儿。</ReplyNotice> : null}
+        {stalled ? <ReplyNotice>Masih ngetik. Tunggu sebentar.</ReplyNotice> : null}
       </div>
     </div>
   );

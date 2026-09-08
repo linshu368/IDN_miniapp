@@ -12,8 +12,8 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 const schema = z.object({
-  name: z.string().min(1, '名字不能为空').max(20, '最多 20 个字符'),
-  greeting: z.string().min(5, '开场白至少 5 个字').max(200),
+  name: z.string().min(1, 'Nama tidak boleh kosong').max(20, 'Maksimal 20 karakter'),
+  greeting: z.string().min(5, 'Sapaan minimal 5 karakter').max(200),
 });
 
 type FormValues = z.infer<typeof schema>;
@@ -39,7 +39,7 @@ export function ExampleForm({
     >
       <div className="space-y-1">
         <label className="text-sm font-medium" htmlFor="name">
-          角色名
+          Nama karakter
         </label>
         <input
           id="name"
@@ -54,7 +54,7 @@ export function ExampleForm({
 
       <div className="space-y-1">
         <label className="text-sm font-medium" htmlFor="greeting">
-          开场白
+          Sapaan pembuka
         </label>
         <textarea
           id="greeting"
@@ -69,7 +69,7 @@ export function ExampleForm({
       </div>
 
       <Button type="submit" disabled={isSubmitting}>
-        {isSubmitting ? '提交中...' : '提交'}
+        {isSubmitting ? 'Mengirim...' : 'Kirim'}
       </Button>
     </form>
   );

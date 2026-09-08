@@ -1,3 +1,4 @@
+import { CREDITS_NAME } from '@miniapp/shared';
 import { fetchRuntimeConfigEntries } from '../../platform/runtime-config.js';
 
 const CONFIG_KEYS = [
@@ -35,10 +36,10 @@ export async function readOfficialCommunityConfig(): Promise<OfficialCommunityCo
     handle: text(read('miniapp_official_community_fallback_handle')) ?? '@MijingAI_Official',
     rewardCredits: Number.isSafeInteger(rawCredits) && rawCredits > 0 ? rawCredits : 500,
     startedAt: rawStartedAt && !Number.isNaN(Date.parse(rawStartedAt)) ? rawStartedAt : null,
-    title: text(copy.title) ?? '加入官方社群',
+    title: text(copy.title) ?? 'Gabung komunitas resmi',
     description:
       text(copy.description) ??
-      '即将为你打开官方纸飞机社群。系统确认已实际入群并完成账户 ID 匹配后，将自动发放 500 星尘。',
+      `Sebentar lagi kamu akan dibuka ke grup Telegram resmi. Setelah sistem konfirmasi kamu sudah masuk grup dan ID akunnya cocok, 500 ${CREDITS_NAME} akan otomatis dikirim.`,
   };
 }
 

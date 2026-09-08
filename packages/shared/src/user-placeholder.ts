@@ -5,7 +5,7 @@
  * 替换必须走函数式 replacement：显示名是用户自由文本，字符串 replacement
  * 会把 `$&` / `$1` 当成模式展开。
  */
-export const DEFAULT_USER_DISPLAY_NAME = '你';
+export const DEFAULT_USER_DISPLAY_NAME = 'kamu';
 
 const USER_PLACEHOLDER = '{{user}}';
 

@@ -14,6 +14,7 @@ import {
   useWishStatusQuery,
 } from '@/lib/api/wishes';
 import { isMarketFeatureEnabled } from '@/lib/market-features';
+import { CREDITS_NAME } from '@/lib/locale';
 import { cn } from '@/lib/utils';
 import { useHaptic, useTelegramBackButton } from '@/lib/telegram';
 
@@ -31,17 +32,17 @@ const INITIAL_MESSAGES: Message[] = [
   {
     id: 'intro',
     role: 'assistant',
-    text: `💫 说说你想要什么样的角色？
-一句话就行，比如：
-- "霸道总裁但其实是社恐"
-- "温柔姐姐，会哄人睡觉"
-- "赛博朋克世界的酒吧老板娘"
-🔒 你的许愿完全私密，放心大胆说 👇每天只能许愿一次哦~`,
+    text: `💫 Ceritain karakter seperti apa yang kamu mau?
+Cukup satu kalimat, misalnya:
+- "CEO galak tapi aslinya introvert"
+- "Kakak yang lembut, bisa nemenin sampai tidur"
+- "Bos bar di dunia cyberpunk"
+🔒 Harapanmu sepenuhnya rahasia, jadi bebas aja cerita 👇 Kamu cuma bisa berharap sekali sehari ya~`,
   },
 ];
 
-const TOO_SHORT_MESSAGE = '再多说几个字呀，不然我猜不到你想要什么样的～';
-const FINISH_MESSAGE = '✅ 记下了！我们会认真看每一条许愿～';
+const TOO_SHORT_MESSAGE = 'Tambahin beberapa kata dulu, biar aku ngerti karakter yang kamu mau~';
+const FINISH_MESSAGE = '✅ Udah dicatat! Kami bakal baca setiap harapan dengan serius~';
 
 function restoreWishMessages(wish: { wish_text: string; extra_text?: string | null }): Message[] {
   return [
@@ -105,10 +106,10 @@ function WishPageContent() {
   useTelegramBackButton(goBack);
 
   const placeholder = useMemo(() => {
-    if (wishStatus.isLoading) return '正在读取许愿状态...';
-    if (step === 'wish') return '一句话许愿...';
-    if (step === 'extra') return '补充关系、性格、故事背景等细节...';
-    return '今天已许愿，明天再来～';
+    if (wishStatus.isLoading) return 'Sedang memuat status harapan...';
+    if (step === 'wish') return 'Tulis harapan dalam satu kalimat...';
+    if (step === 'extra') return 'Tambahin detail hubungan, karakter, latar cerita...';
+    return 'Hari ini sudah berharap, datang lagi besok~';
   }, [step, wishStatus.isLoading]);
 
   useEffect(() => {
@@ -250,8 +251,8 @@ function WishPageContent() {
         setStep('extra');
         appendMessage({
           role: 'assistant',
-          text: `✅ 收到！奖励你 ${result.wish.reward_credits} 星尘 ✨如果你还有更具体的想法，比如你和 ta 的关系、性格细节、故事背景，可以继续说～
-没有的话点下面就好 👇`,
+          text: `✅ Diterima! Kamu dapat ${result.wish.reward_credits} ${CREDITS_NAME} ✨ Kalau masih ada ide lebih spesifik, misalnya hubungan kalian, detail karakter, atau latar cerita, boleh lanjut cerita~
+Tidak ada? Tekan tombol di bawah 👇`,
         });
         return;
       }
@@ -265,7 +266,7 @@ function WishPageContent() {
       }
     } catch (error) {
       notification('error');
-      const message = error instanceof Error ? error.message : '许愿暂时保存失败';
+      const message = error instanceof Error ? error.message : 'Harapan belum bisa disimpan';
       appendMessage({ role: 'assistant', text: message });
     }
   }, [
@@ -290,7 +291,7 @@ function WishPageContent() {
       appendMessage({ role: 'assistant', text: FINISH_MESSAGE });
     } catch (error) {
       notification('error');
-      const message = error instanceof Error ? error.message : '许愿暂时保存失败';
+      const message = error instanceof Error ? error.message : 'Harapan belum bisa disimpan';
       appendMessage({ role: 'assistant', text: message });
     }
   }, [appendMessage, completeWishAsync, impact, isPending, notification, step, wishId]);
@@ -309,13 +310,13 @@ function WishPageContent() {
           size="icon"
           onClick={goBack}
           className="-ml-2 rounded-full text-muted-foreground hover:text-foreground"
-          aria-label="返回创作页"
+          aria-label="Kembali ke kreasi"
         >
           <ChevronLeft className="h-5 w-5" aria-hidden />
         </Button>
         <div className="min-w-0 flex-1">
           <p className="text-xs font-bold uppercase tracking-[0.22em] text-primary/70">Wish Pool</p>
-          <h1 className="text-lg font-black tracking-wide">许愿池</h1>
+          <h1 className="text-lg font-black tracking-wide">Kolam harapan</h1>
         </div>
         <div className="rounded-full border border-border bg-card p-2 text-primary">
           <Sparkles className="h-4 w-4" aria-hidden />
@@ -354,7 +355,7 @@ function WishPageContent() {
             disabled={isPending}
             className="mb-2 h-8 rounded-full px-3 text-xs text-muted-foreground hover:text-foreground"
           >
-            💖 就这样吧
+            💖 Gitu aja deh
           </Button>
         )}
         <div className="flex items-end gap-2">
@@ -384,7 +385,7 @@ function WishPageContent() {
             onClick={handleSubmit}
             disabled={!input.trim() || step === 'done' || isPending}
             className="h-12 w-12 rounded-2xl bg-primary text-primary-foreground hover:opacity-90"
-            aria-label="发送许愿"
+            aria-label="Kirim harapan"
           >
             <Send className="h-4 w-4" aria-hidden />
           </Button>

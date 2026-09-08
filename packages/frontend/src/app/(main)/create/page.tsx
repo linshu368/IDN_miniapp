@@ -22,7 +22,7 @@ function CreatePageLive() {
       <header>
         <div>
           <p className="text-xs font-bold uppercase tracking-[0.24em] text-primary/70">Create</p>
-          <h1 className="mt-1 text-2xl font-black tracking-tight">创作</h1>
+          <h1 className="mt-1 text-2xl font-black tracking-tight">Kreasi</h1>
         </div>
       </header>
 
@@ -34,13 +34,13 @@ function CreatePageLive() {
         >
           <Link href="/create/wish">
             <Sparkles className="size-5" aria-hidden />
-            许愿池
+            Kolam harapan
           </Link>
         </Button>
         <div className="rounded-3xl border border-border bg-card px-6 py-8 shadow-2xl shadow-black/30 backdrop-blur">
-          <p className="text-[13px] font-medium text-foreground/90">创作功能即将上线</p>
+          <p className="text-[13px] font-medium text-foreground/90">Fitur kreasi segera hadir</p>
           <p className="mt-2 text-xs leading-5 text-muted-foreground">
-            想要什么角色，可以先进入许愿池告诉我们。
+            Kalau mau karakter tertentu, masuk ke kolam harapan dan ceritain ke kami.
           </p>
         </div>
       </section>

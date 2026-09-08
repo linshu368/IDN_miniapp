@@ -38,7 +38,7 @@ export function FavoriteButton({ characterId, variant = 'card', className }: Fav
     <button
       type="button"
       disabled={!characterId}
-      aria-label={favorited ? '取消收藏' : '收藏角色卡'}
+      aria-label={favorited ? 'Hapus dari favorit' : 'Favorit'}
       aria-pressed={favorited}
       // 卡面上心形与卡片进入动作相邻，必须吃掉事件避免顺带进入角色。
       onClick={(event) => {

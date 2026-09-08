@@ -83,7 +83,7 @@ export default async function conversationRoutes(app: FastifyInstance) {
       const body = (request.body ?? {}) as Partial<CreateConversationRequest>;
       const characterId = body.character_id;
       if (typeof characterId !== 'string' || !UUID_PATTERN.test(characterId)) {
-        return reply.status(400).send(fail('BAD_REQUEST', '角色卡 ID 无效'));
+        return reply.status(400).send(fail('BAD_REQUEST', 'ID karakter tidak valid'));
       }
 
       const log = requestLogger(request.log, 'conversations');
@@ -119,7 +119,7 @@ export default async function conversationRoutes(app: FastifyInstance) {
           },
           '新建会话失败'
         );
-        return reply.status(500).send(fail('INTERNAL_ERROR', '新建会话失败'));
+        return reply.status(500).send(fail('INTERNAL_ERROR', 'Gagal membuat percakapan'));
       }
     }
   );
@@ -137,7 +137,7 @@ export default async function conversationRoutes(app: FastifyInstance) {
         offset?: string;
       };
       if (query.character_id !== undefined && !UUID_PATTERN.test(query.character_id)) {
-        return reply.status(400).send(fail('BAD_REQUEST', '角色卡 ID 无效'));
+        return reply.status(400).send(fail('BAD_REQUEST', 'ID karakter tidak valid'));
       }
 
       const dbUser = await getOrCreateDbUser(request.user);
@@ -170,7 +170,7 @@ export default async function conversationRoutes(app: FastifyInstance) {
 
       const sessionId = (request.params as { id?: string }).id;
       if (!sessionId || !UUID_PATTERN.test(sessionId)) {
-        return reply.status(400).send(fail('BAD_REQUEST', '会话 ID 无效'));
+        return reply.status(400).send(fail('BAD_REQUEST', 'ID percakapan tidak valid'));
       }
 
       const query = request.query as { limit?: string; before_turn_index?: string };
@@ -209,20 +209,20 @@ export default async function conversationRoutes(app: FastifyInstance) {
 
       const sessionId = (request.params as { id?: string }).id;
       if (!sessionId || !UUID_PATTERN.test(sessionId)) {
-        return reply.status(400).send(fail('BAD_REQUEST', '会话 ID 无效'));
+        return reply.status(400).send(fail('BAD_REQUEST', 'ID percakapan tidak valid'));
       }
 
       const body = (request.body ?? {}) as Partial<UpdateConversationRequest>;
       const hasTitle = 'title' in body;
       // null 是有意义的取值（恢复为角色名），所以只挡非字符串的非 null
       if (hasTitle && body.title !== null && typeof body.title !== 'string') {
-        return reply.status(400).send(fail('BAD_REQUEST', '会话标题无效'));
+        return reply.status(400).send(fail('BAD_REQUEST', 'Judul percakapan tidak valid'));
       }
       if (body.pinned !== undefined && typeof body.pinned !== 'boolean') {
-        return reply.status(400).send(fail('BAD_REQUEST', '置顶状态无效'));
+        return reply.status(400).send(fail('BAD_REQUEST', 'Status pin tidak valid'));
       }
       if (!hasTitle && body.pinned === undefined) {
-        return reply.status(400).send(fail('BAD_REQUEST', '没有需要更新的字段'));
+        return reply.status(400).send(fail('BAD_REQUEST', 'Tidak ada yang perlu diubah'));
       }
 
       const dbUser = await getOrCreateDbUser(request.user);
@@ -255,7 +255,7 @@ export default async function conversationRoutes(app: FastifyInstance) {
 
       const sessionId = (request.params as { id?: string }).id;
       if (!sessionId || !UUID_PATTERN.test(sessionId)) {
-        return reply.status(400).send(fail('BAD_REQUEST', '会话 ID 无效'));
+        return reply.status(400).send(fail('BAD_REQUEST', 'ID percakapan tidak valid'));
       }
 
       const dbUser = await getOrCreateDbUser(request.user);
@@ -280,18 +280,20 @@ export default async function conversationRoutes(app: FastifyInstance) {
 
       const sessionId = (request.params as { id?: string }).id;
       if (!sessionId || !UUID_PATTERN.test(sessionId)) {
-        return reply.status(400).send(fail('BAD_REQUEST', '会话 ID 无效'));
+        return reply.status(400).send(fail('BAD_REQUEST', 'ID percakapan tidak valid'));
       }
 
       const body = (request.body ?? {}) as Partial<SendMessageRequest>;
       const content = typeof body.content === 'string' ? body.content.trim() : '';
       if (!content) {
-        return reply.status(400).send(fail('BAD_REQUEST', '消息内容不能为空'));
+        return reply.status(400).send(fail('BAD_REQUEST', 'Pesan tidak boleh kosong'));
       }
       if (content.length > MAX_USER_INPUT_LENGTH) {
         return reply
           .status(400)
-          .send(fail('BAD_REQUEST', `消息内容不能超过 ${MAX_USER_INPUT_LENGTH} 字`));
+          .send(
+            fail('BAD_REQUEST', `Pesan tidak boleh lebih dari ${MAX_USER_INPUT_LENGTH} karakter`)
+          );
       }
 
       return await streamTurn({
@@ -313,7 +315,7 @@ export default async function conversationRoutes(app: FastifyInstance) {
 
       const sessionId = (request.params as { id?: string }).id;
       if (!sessionId || !UUID_PATTERN.test(sessionId)) {
-        return reply.status(400).send(fail('BAD_REQUEST', '会话 ID 无效'));
+        return reply.status(400).send(fail('BAD_REQUEST', 'ID percakapan tidak valid'));
       }
 
       return await streamTurn({
@@ -384,7 +386,7 @@ export default async function conversationRoutes(app: FastifyInstance) {
         // 切模型带着「付费模型先查余额」的闸门，从这里旁路改会绕过它
         return reply
           .status(400)
-          .send(fail('BAD_REQUEST', '切换模型请使用 POST /api/v1/models/select'));
+          .send(fail('BAD_REQUEST', 'Ganti model pakai POST /api/v1/models/select'));
       }
 
       // 只透传三个 pref_* 字段：display_name / avatar_url 归 /api/users/settings
@@ -399,7 +401,7 @@ export default async function conversationRoutes(app: FastifyInstance) {
       try {
         await settings.patch(dbUser.id, request.user, patch);
       } catch (error) {
-        const message = error instanceof Error ? error.message : '生成配置更新失败';
+        const message = error instanceof Error ? error.message : 'Gagal update pengaturan generate';
         return reply.status(400).send(fail('BAD_REQUEST', message));
       }
 
@@ -432,7 +434,9 @@ function finishTurn(reply: FastifyReply, outcome: ConversationTurnOutcome): void
     return;
   }
 
-  void reply.status(502).send(fail('upstream_error', '生成服务暂时不可用，请稍后再试'));
+  void reply
+    .status(502)
+    .send(fail('upstream_error', 'Layanan generate lagi gangguan. Coba lagi nanti.'));
 }
 
 /**
@@ -451,7 +455,11 @@ function failTurn(
       { event: 'conversation.turn.failed_mid_stream', err: error },
       '流已开始后失败，改以流内 error 事件收口'
     );
-    sink.send({ type: 'error', code: 'upstream_error', message: '生成中断，请稍后重试' });
+    sink.send({
+      type: 'error',
+      code: 'upstream_error',
+      message: 'Generate terputus. Coba lagi nanti.',
+    });
     sink.close();
     return;
   }
@@ -459,5 +467,5 @@ function failTurn(
   if (sendConversationError(reply, error)) return;
 
   log.sys.error({ event: 'conversation.turn.failed', err: error }, '一轮生成失败');
-  void reply.status(500).send(fail('INTERNAL_ERROR', '生成失败，请稍后再试'));
+  void reply.status(500).send(fail('INTERNAL_ERROR', 'Gagal generate. Coba lagi nanti.'));
 }

@@ -146,7 +146,7 @@ export function CharacterDetailSheet({
                 <button
                   type="button"
                   onClick={onClose}
-                  aria-label="关闭"
+                  aria-label="Tutup"
                   className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-black/40 text-white/90 backdrop-blur-md transition-colors hover:bg-black/60 active:scale-95"
                 >
                   <X className="h-4 w-4" />
@@ -192,7 +192,7 @@ export function CharacterDetailSheet({
                   <section>
                     <p className="mb-2 flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
                       <Sparkles className="h-3 w-3" />
-                      角色简介
+                      Bio karakter
                     </p>
                     {description ? (
                       <p className="whitespace-pre-wrap text-[14px] leading-relaxed text-foreground/90">
@@ -200,7 +200,7 @@ export function CharacterDetailSheet({
                       </p>
                     ) : (
                       <p className="text-[13px] leading-relaxed text-muted-foreground">
-                        这个角色还没有公开简介，进入后直接开始探索 TA 的世界。
+                        Karakter ini belum punya bio. Masuk aja dan mulai jelajahi dunianya.
                       </p>
                     )}
                   </section>
@@ -215,7 +215,7 @@ export function CharacterDetailSheet({
                       >
                         <span className="flex items-center gap-1.5">
                           <Quote className="h-3 w-3" />
-                          开场白
+                          Sapaan pembuka
                         </span>
                         <ChevronDown
                           className={`h-4 w-4 transition-transform duration-300 ${
@@ -248,7 +248,7 @@ export function CharacterDetailSheet({
                   onClick={onClose}
                   className="h-12 shrink-0 rounded-2xl border border-border bg-card px-5 text-[14px] font-medium text-muted-foreground transition-colors hover:bg-secondary active:scale-[0.98]"
                 >
-                  {entering ? '取消进入' : '先看看别的'}
+                  Nanti dulu
                 </button>
                 <button
                   type="button"
@@ -257,7 +257,7 @@ export function CharacterDetailSheet({
                   className="relative flex h-12 flex-1 items-center justify-center gap-1.5 overflow-hidden rounded-2xl bg-gradient-to-r from-primary to-rose text-[15px] font-semibold text-primary-foreground shadow-lg shadow-[0_10px_30px_hsl(var(--glow)/0.3)] transition-all active:scale-[0.98] disabled:opacity-70"
                 >
                   <Sparkles className={`h-4 w-4 ${entering ? 'animate-spin' : ''}`} />
-                  {entering ? '正在进入…' : '进入角色'}
+                  {entering ? 'Sedang masuk…' : 'Masuk'}
                   {entering && (
                     <span className="absolute inset-x-3 bottom-1 h-1 overflow-hidden rounded-full bg-black/20">
                       <span

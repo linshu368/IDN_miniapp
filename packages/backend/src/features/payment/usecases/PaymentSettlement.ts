@@ -11,7 +11,11 @@
  * 通知上；但多入口就必须共用一条幂等路径，否则会出现重复加星尘。
  */
 
-import type { PaymentOrderStatus, PaymentSettlementSource } from '@miniapp/shared';
+import {
+  CREDITS_NAME,
+  type PaymentOrderStatus,
+  type PaymentSettlementSource,
+} from '@miniapp/shared';
 import type { RequestLogger } from '../../../lib/logger.js';
 import { checkInviteFirstPaidReward } from '../../../lib/invite-rewards.js';
 import { insertUserNotification } from '../../../lib/notifications.js';
@@ -84,8 +88,8 @@ export async function settlePaidOrder(
         await insertUserNotification({
           userId: order.user_id,
           category: 'system',
-          title: '星尘充值到账',
-          body: `订单 ${order.id} 已完成，${totalCredits} 星尘已到账。`,
+          title: `Isi ${CREDITS_NAME} masuk`,
+          body: `Pesanan ${order.id} selesai. ${totalCredits} ${CREDITS_NAME} sudah masuk.`,
         });
       } catch (notificationError) {
         log.sys.error(

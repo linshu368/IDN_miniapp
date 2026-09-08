@@ -23,8 +23,8 @@ import { CharacterDetailSheet } from './character-detail-sheet';
 const FIRST_SCREEN_IMAGE_COUNT = 8;
 
 const LOBBY_TABS: ReadonlyArray<{ value: LobbySort; label: string }> = [
-  { value: 'recommended', label: '推荐' },
-  { value: 'latest', label: '最新' },
+  { value: 'recommended', label: 'Rekomendasi' },
+  { value: 'latest', label: 'Terbaru' },
 ];
 
 // 命中打分:数字越大越精确,0 = 不命中
@@ -139,16 +139,16 @@ export function CharacterGallery() {
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="搜索角色、标签或作者"
+          placeholder="Cari karakter, tag, atau kreator"
           className="h-10 rounded-full pl-10 pr-10 border-border bg-card text-foreground placeholder:text-muted-foreground/70 focus-visible:ring-ring/50 focus-visible:bg-secondary transition-all"
-          aria-label="搜索角色"
+          aria-label="Cari karakter"
         />
         {query && (
           <Button
             variant="ghost"
             size="icon"
             onClick={() => setQuery('')}
-            aria-label="清空搜索"
+            aria-label="Hapus pencarian"
             className="absolute right-1 top-1 h-8 w-8 rounded-full text-muted-foreground hover:text-foreground hover:bg-secondary"
           >
             <X className="h-4 w-4" />
@@ -162,7 +162,7 @@ export function CharacterGallery() {
   const sortTabs = (
     <div
       role="tablist"
-      aria-label="角色排序"
+      aria-label="Urutan karakter"
       className="mx-auto flex w-full max-w-screen-xl items-center gap-2 px-4 pb-1 pt-1.5 sm:px-6 lg:px-8"
     >
       {LOBBY_TABS.map((tab) => {
@@ -186,7 +186,7 @@ export function CharacterGallery() {
             {tab.value === 'latest' && showLatestBadge ? (
               <span
                 role="status"
-                aria-label="有新角色卡"
+                aria-label="Ada karakter baru"
                 className="pointer-events-none absolute -right-1 -top-1.5 rounded-full border border-success/50 bg-success/15 px-1.5 text-[9px] font-bold leading-[14px] tracking-wide text-success"
               >
                 New
@@ -211,7 +211,7 @@ export function CharacterGallery() {
         {listHeader}
         <div
           className="mx-auto grid w-full max-w-screen-xl grid-cols-[repeat(auto-fit,minmax(9.5rem,1fr))] gap-3 px-4 py-6 sm:px-6 lg:px-8"
-          aria-label="加载中"
+          aria-label="Sedang memuat"
         >
           {Array.from({ length: 4 }).map((_, i) => (
             <div
@@ -229,7 +229,7 @@ export function CharacterGallery() {
       <>
         {listHeader}
         <p className="mx-auto max-w-screen-xl px-4 py-8 text-center text-[13px] text-muted-foreground sm:px-6 lg:px-8">
-          门好像被风合上了。稍后再来。
+          Pintunya ketutup angin. Coba lagi nanti.
         </p>
       </>
     );
@@ -240,7 +240,7 @@ export function CharacterGallery() {
       <>
         {listHeader}
         <p className="mx-auto max-w-screen-xl px-4 py-8 text-center text-[13px] text-muted-foreground sm:px-6 lg:px-8">
-          空旷的空间，还没有角色到达。
+          Masih kosong. Belum ada karakter di sini.
         </p>
       </>
     );
@@ -251,9 +251,11 @@ export function CharacterGallery() {
       {listHeader}
       {filtered.length === 0 ? (
         <div className="mx-auto flex max-w-screen-xl flex-col items-center gap-2 px-4 py-10 sm:px-6 lg:px-8">
-          <p className="text-center text-[13px] text-muted-foreground">没有匹配「{query}」的角色</p>
+          <p className="text-center text-[13px] text-muted-foreground">
+            Tidak ada karakter yang cocok dengan “{query}”
+          </p>
           <p className="text-center text-[11px] text-muted-foreground/80">
-            可以到「创作」页右上角的许愿池告诉我们你想要的角色。
+            Fitur kreasi belum dibuka. Kamu tetap bisa chat karakter yang sudah ada.
           </p>
         </div>
       ) : (

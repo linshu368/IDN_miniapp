@@ -1,5 +1,7 @@
 import type { PaymentOrderStatus, PaymentPlan, PaymentType } from '@miniapp/shared';
 
+import { DISPLAY_LOCALE, zonedCalendarKey, zonedDateParts } from '@/lib/locale';
+
 /** 分转元，保留 2 位小数（示例：600 → "6.00"） */
 export function formatYuan(cents: number): string {
   return (cents / 100).toFixed(2);
@@ -13,23 +15,23 @@ export function formatYuanShort(cents: number): string {
 
 /** 大数千分位；42800 → "42,800" */
 export function formatNumber(n: number): string {
-  return n.toLocaleString('en-US');
+  return n.toLocaleString(DISPLAY_LOCALE);
 }
 
 export function paymentTypeLabel(type: PaymentType): string {
-  return type === 'alipay' ? '支付宝' : '微信';
+  return type === 'alipay' ? 'Alipay' : 'WeChat';
 }
 
 export function orderStatusLabel(status: PaymentOrderStatus): string {
   switch (status) {
     case 'pending':
-      return '待支付';
+      return 'Menunggu bayar';
     case 'completed':
-      return '支付成功';
+      return 'Berhasil';
     case 'expired':
-      return '已过期';
+      return 'Kedaluwarsa';
     case 'failed':
-      return '已失败';
+      return 'Gagal';
   }
 }
 
@@ -67,22 +69,21 @@ export function safePaymentReturnTo(value: string | null): string | null {
 }
 
 /**
- * 订单按相对时间分组（今天 / 昨天 / 本月 / 更早）；用于流水列表的段落标题。
- * 只用日历日粒度，不考虑时区的精细处理。
+ * 订单按相对时间分组（Hari ini / Kemarin / Bulan ini）；用于流水列表的段落标题。
+ * 日历日按 Asia/Jakarta。
  */
 export function groupLabelForDate(isoDate: string, now: Date = new Date()): string {
   const d = new Date(isoDate);
-  const startOfDay = (date: Date) => {
-    const x = new Date(date);
-    x.setHours(0, 0, 0, 0);
-    return x.getTime();
-  };
-  const todayStart = startOfDay(now);
-  const diffDays = Math.floor((todayStart - startOfDay(d)) / 86_400_000);
-  if (diffDays <= 0) return '今天';
-  if (diffDays === 1) return '昨天';
-  if (d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth()) return '本月';
-  return `${d.getFullYear()}年${d.getMonth() + 1}月`;
+  const todayKey = zonedCalendarKey(now);
+  const dateKey = zonedCalendarKey(d);
+  const nowParts = zonedDateParts(now);
+  const dParts = zonedDateParts(d);
+  const yesterdayKey = zonedCalendarKey(new Date(now.getTime() - 86_400_000));
+
+  if (dateKey === todayKey) return 'Hari ini';
+  if (dateKey === yesterdayKey) return 'Kemarin';
+  if (dParts.year === nowParts.year && dParts.month === nowParts.month) return 'Bulan ini';
+  return `${dParts.month}/${dParts.year}`;
 }
 
 /** 支付中倒计时：剩余秒数 */

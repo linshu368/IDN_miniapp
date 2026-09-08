@@ -43,7 +43,7 @@ export function ChatGenerationSettings() {
     return (
       <div className="flex justify-center py-10 text-[13px] text-muted-foreground">
         <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden />
-        加载中
+        Memuat
       </div>
     );
   }
@@ -62,9 +62,9 @@ export function ChatGenerationSettings() {
   return (
     <div className="space-y-5">
       <section>
-        <h3 className="mb-2 text-[13px] font-semibold text-foreground">回复长度</h3>
+        <h3 className="mb-2 text-[13px] font-semibold text-foreground">Panjang balasan</h3>
         {lengthOptions.length === 0 ? (
-          <p className="text-[12px] text-muted-foreground">暂无可用档位</p>
+          <p className="text-[12px] text-muted-foreground">Belum ada opsi yang tersedia</p>
         ) : (
           <div
             className="grid gap-2"
@@ -95,23 +95,24 @@ export function ChatGenerationSettings() {
 
       <section className="flex items-center justify-between gap-3 rounded-xl border border-border bg-card px-4 py-3">
         <div className="min-w-0">
-          <p className="text-[13px] font-semibold text-foreground">结尾给出选项</p>
+          <p className="text-[13px] font-semibold text-foreground">Beri opsi di akhir</p>
           <p className="mt-0.5 text-[11px] leading-snug text-muted-foreground">
-            让角色在每次回复末尾提供几个可选的下一步
+            Biar karakter kasih beberapa opsi langkah berikutnya di akhir tiap balasan
           </p>
         </div>
         <Switch
           checked={config.pref_show_options}
           disabled={patch.isPending}
           onCheckedChange={(checked) => patch.mutate({ pref_show_options: checked })}
-          aria-label="结尾给出选项"
+          aria-label="Beri opsi di akhir"
         />
       </section>
 
       <section>
-        <h3 className="mb-1 text-[13px] font-semibold text-foreground">自定义指令</h3>
+        <h3 className="mb-1 text-[13px] font-semibold text-foreground">Instruksi kustom</h3>
         <p className="mb-2 text-[11px] leading-snug text-muted-foreground">
-          对所有角色生效，例如「多写环境描写」「不要使用括号旁白」
+          Berlaku untuk semua karakter. Contoh: “lebih banyak deskripsi suasana”, “jangan pakai
+          narasi dalam tanda kurung”
         </p>
         <textarea
           value={instructions}
@@ -123,13 +124,17 @@ export function ChatGenerationSettings() {
           rows={3}
           maxLength={MAX_CUSTOM_INSTRUCTIONS}
           disabled={patch.isPending}
-          placeholder="留空则不附加任何额外指令"
-          aria-label="自定义指令"
+          placeholder="Kosongkan kalau tidak mau tambah instruksi"
+          aria-label="Instruksi kustom"
           className="w-full resize-none rounded-xl border border-border bg-card px-3 py-2.5 text-[13px] text-foreground placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
         />
         <div className="mt-1.5 flex items-center justify-between">
           <span className="text-[11px] text-muted-foreground">
-            {instructionsDirty ? '离开输入框后自动保存' : patch.isPending ? '保存中…' : ''}
+            {instructionsDirty
+              ? 'Otomatis tersimpan setelah kamu keluar dari kolom'
+              : patch.isPending
+                ? 'Menyimpan…'
+                : ''}
           </span>
           <span className="text-[11px] text-muted-foreground">
             {instructions.length} / {MAX_CUSTOM_INSTRUCTIONS}

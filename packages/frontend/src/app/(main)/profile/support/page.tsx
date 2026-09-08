@@ -15,7 +15,7 @@ import {
 import { useTelegramBackButton } from '@/lib/telegram';
 import { pendingOutbox, type PendingSupportMessage } from '@/lib/utils/notifications';
 
-const GREETING = '你好，这里是星尘客服。请描述你遇到的问题，我们会尽快回复。';
+const GREETING = 'Halo, ini bantuan PribadiAI. Ceritakan masalahmu, kami akan membalas secepatnya.';
 
 export default function SupportPage() {
   const router = useRouter();
@@ -92,11 +92,11 @@ export default function SupportPage() {
           size="icon"
           onClick={goBack}
           className="rounded-full text-muted-foreground hover:bg-secondary hover:text-foreground"
-          aria-label="返回"
+          aria-label="Kembali"
         >
           <ChevronLeft className="h-5 w-5" aria-hidden />
         </Button>
-        <h1 className="text-base font-bold tracking-wide">联系客服</h1>
+        <h1 className="text-base font-bold tracking-wide">Bantuan</h1>
         <div className="ml-auto flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground">
           <span
             aria-hidden
@@ -105,7 +105,7 @@ export default function SupportPage() {
               connected ? 'bg-[hsl(var(--glow))]' : 'bg-muted-foreground/60'
             )}
           />
-          {connected ? '在线' : '连接中'}
+          {connected ? 'Online' : 'Menghubungkan'}
         </div>
       </header>
 
@@ -113,7 +113,7 @@ export default function SupportPage() {
         {query.isLoading ? (
           <div className="flex items-center justify-center py-16 text-muted-foreground">
             <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden />
-            加载中
+            Memuat
           </div>
         ) : (
           <>
@@ -138,7 +138,7 @@ export default function SupportPage() {
                     className="flex items-center gap-1 text-[11px] font-semibold text-destructive"
                   >
                     <AlertCircle className="h-3.5 w-3.5" aria-hidden />
-                    发送失败，点击重试
+                    Gagal terkirim, ketuk untuk coba lagi
                   </button>
                 ) : null}
               </div>
@@ -160,8 +160,8 @@ export default function SupportPage() {
           }}
           rows={1}
           maxLength={4000}
-          placeholder="说说你遇到的问题…"
-          aria-label="输入要发送给客服的问题"
+          placeholder="Ceritakan masalahmu…"
+          aria-label="Tulis pertanyaan untuk bantuan"
           className="max-h-32 min-h-[42px] flex-1 resize-none rounded-[20px] border border-border bg-card px-4 py-2.5 text-[14px] text-foreground placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
         />
         <Button
@@ -169,7 +169,7 @@ export default function SupportPage() {
           size="icon"
           onClick={handleSend}
           disabled={!draft.trim()}
-          aria-label="发送"
+          aria-label="Kirim"
           className="h-[42px] w-[42px] shrink-0 rounded-full"
         >
           <SendHorizontal className="h-[18px] w-[18px]" aria-hidden />
@@ -195,7 +195,7 @@ function AgentBubble({ body }: { body: string }) {
     <div className="flex justify-start">
       <div className="max-w-[78%] rounded-[18px] rounded-bl-md border border-border bg-card px-3.5 py-2.5">
         <span className="mb-1 block text-[10px] font-bold tracking-wide text-primary">
-          官方客服
+          Bantuan resmi
         </span>
         <span className="block whitespace-pre-wrap text-[14px] leading-relaxed text-foreground">
           {body}

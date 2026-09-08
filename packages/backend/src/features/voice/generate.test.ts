@@ -95,7 +95,7 @@ describe('runVoiceGeneration — 文本来源分支', () => {
       ttsSpeed: 1,
       billingEnabled: true,
       creditsPerGeneration: 15,
-      priceLabel: '15 星尘',
+      priceLabel: '15 Binar',
       maxSpokenChars: 300,
       log: makeLogger(),
     });
@@ -122,7 +122,7 @@ describe('runVoiceGeneration — 文本来源分支', () => {
       ttsSpeed: 1,
       billingEnabled: false,
       creditsPerGeneration: 15,
-      priceLabel: '15 星尘',
+      priceLabel: '15 Binar',
       maxSpokenChars: 300,
       log: makeLogger(),
     });
@@ -151,7 +151,7 @@ describe('runVoiceGeneration — 最终长度闸', () => {
       ttsSpeed: 1,
       billingEnabled: true,
       creditsPerGeneration: 15,
-      priceLabel: '15 星尘',
+      priceLabel: '15 Binar',
       maxSpokenChars: 300,
       log: makeLogger(),
     });
@@ -178,7 +178,7 @@ describe('runVoiceGeneration — 最终长度闸', () => {
       ttsSpeed: 1,
       billingEnabled: true,
       creditsPerGeneration: 15,
-      priceLabel: '15 星尘',
+      priceLabel: '15 Binar',
       maxSpokenChars: 300,
       log: makeLogger(),
     });
@@ -206,7 +206,7 @@ describe('runVoiceGeneration — 计费开关', () => {
       ttsSpeed: 1,
       billingEnabled: false,
       creditsPerGeneration: 15,
-      priceLabel: '15 星尘',
+      priceLabel: '15 Binar',
       maxSpokenChars: 300,
       log: makeLogger(),
     });
@@ -239,7 +239,7 @@ describe('runVoiceGeneration — Q4 扣费时余额不足', () => {
       ttsSpeed: 1,
       billingEnabled: true,
       creditsPerGeneration: 15,
-      priceLabel: '15 星尘',
+      priceLabel: '15 Binar',
       maxSpokenChars: 300,
       log: makeLogger(),
     });
@@ -269,7 +269,7 @@ describe('runVoiceGeneration — Q4 扣费时余额不足', () => {
       ttsSpeed: 1,
       billingEnabled: true,
       creditsPerGeneration: 15,
-      priceLabel: '15 星尘',
+      priceLabel: '15 Binar',
       maxSpokenChars: 300,
       log: makeLogger(),
     });

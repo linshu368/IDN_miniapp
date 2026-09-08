@@ -91,13 +91,15 @@ export default async function voiceRoutes(app: FastifyInstance) {
 
       const body = (request.body ?? {}) as PatchVoiceConfigRequest;
       if (body.voice_id === undefined && body.playback_rate === undefined) {
-        return reply.status(400).send(fail('BAD_REQUEST', '没有要修改的语音设置'));
+        return reply
+          .status(400)
+          .send(fail('BAD_REQUEST', 'Tidak ada pengaturan suara yang perlu diubah'));
       }
       if (body.voice_id !== undefined && typeof body.voice_id !== 'string') {
-        return reply.status(400).send(fail('BAD_REQUEST', '音色格式不正确'));
+        return reply.status(400).send(fail('BAD_REQUEST', 'Format suara tidak valid'));
       }
       if (body.playback_rate !== undefined && typeof body.playback_rate !== 'number') {
-        return reply.status(400).send(fail('BAD_REQUEST', '播放速度格式不正确'));
+        return reply.status(400).send(fail('BAD_REQUEST', 'Format kecepatan putar tidak valid'));
       }
 
       const dbUser = await getOrCreateDbUser(request.user);
@@ -118,7 +120,7 @@ export default async function voiceRoutes(app: FastifyInstance) {
           })
         );
       } catch (error) {
-        const message = error instanceof Error ? error.message : '更新语音设置失败';
+        const message = error instanceof Error ? error.message : 'Gagal update pengaturan suara';
         if (message.startsWith('无效的')) {
           return reply.status(400).send(fail('BAD_REQUEST', message));
         }
@@ -142,7 +144,7 @@ export default async function voiceRoutes(app: FastifyInstance) {
 
       const { sessionId } = request.params as { sessionId: string };
       if (!UUID_PATTERN.test(sessionId)) {
-        return reply.status(400).send(fail('BAD_REQUEST', '会话 ID 无效'));
+        return reply.status(400).send(fail('BAD_REQUEST', 'ID percakapan tidak valid'));
       }
 
       const dbUser = await getOrCreateDbUser(request.user);
@@ -150,7 +152,7 @@ export default async function voiceRoutes(app: FastifyInstance) {
         await sessions.requireSession(sessionId, dbUser.id);
       } catch (error) {
         if (error instanceof ConversationRepositoryError) {
-          return reply.status(404).send(fail('NOT_FOUND', '这段对话不存在'));
+          return reply.status(404).send(fail('NOT_FOUND', 'Percakapan ini tidak ditemukan'));
         }
         throw error;
       }
@@ -183,26 +185,35 @@ export default async function voiceRoutes(app: FastifyInstance) {
         messageId: string;
       };
       if (!UUID_PATTERN.test(sessionId) || !UUID_PATTERN.test(messageId)) {
-        return reply.status(400).send(fail('BAD_REQUEST', '这条内容不支持生成语音'));
+        return reply
+          .status(400)
+          .send(fail('BAD_REQUEST', 'Konten ini tidak bisa di-generate jadi suara'));
       }
       // 写稿与合成是两个供应商两把 key，缺任何一把都走不完整条链路
       if (!config.voice.draft.apiKey || !config.voice.apiKey) {
-        return reply.status(503).send(fail('VOICE_UNAVAILABLE', '语音功能暂不可用'));
+        return reply.status(503).send(fail('VOICE_UNAVAILABLE', 'Fitur suara belum tersedia'));
       }
 
       const body = (request.body ?? {}) as CreateMessageVoiceRequest;
       if (body.custom_text !== undefined && typeof body.custom_text !== 'string') {
-        return reply.status(400).send(fail('BAD_REQUEST', '自定义语音文字格式不正确'));
+        return reply.status(400).send(fail('BAD_REQUEST', 'Format teks suara kustom tidak valid'));
       }
       const rawCustom = body.custom_text?.trim() ?? '';
       if (rawCustom.length > MAX_CUSTOM_VOICE_CHARS) {
         return reply
           .status(400)
-          .send(fail('BAD_REQUEST', `自定义语音文字不能超过 ${MAX_CUSTOM_VOICE_CHARS} 字`));
+          .send(
+            fail(
+              'BAD_REQUEST',
+              `Teks suara kustom tidak boleh lebih dari ${MAX_CUSTOM_VOICE_CHARS} karakter`
+            )
+          );
       }
       const customText = rawCustom ? normalizeCustomText(rawCustom) : '';
       if (rawCustom && !customText) {
-        return reply.status(400).send(fail('BAD_REQUEST', '自定义语音文字里没有可朗读的内容'));
+        return reply
+          .status(400)
+          .send(fail('BAD_REQUEST', 'Teks suara kustom tidak ada yang bisa dibacakan'));
       }
 
       const dbUser = await getOrCreateDbUser(request.user);
@@ -210,7 +221,7 @@ export default async function voiceRoutes(app: FastifyInstance) {
         await sessions.requireSession(sessionId, dbUser.id);
       } catch (error) {
         if (error instanceof ConversationRepositoryError) {
-          return reply.status(404).send(fail('NOT_FOUND', '这段对话不存在'));
+          return reply.status(404).send(fail('NOT_FOUND', 'Percakapan ini tidak ditemukan'));
         }
         throw error;
       }
@@ -237,7 +248,7 @@ export default async function voiceRoutes(app: FastifyInstance) {
       const turn = await history.findCurrentTurnById(sessionId, messageId);
       const sourceText = turn?.assistant_reply?.trim() ?? '';
       if (!turn || !sourceText) {
-        return reply.status(404).send(fail('NOT_FOUND', '这条回复不存在或还没有内容'));
+        return reply.status(404).send(fail('NOT_FOUND', 'Balasan ini tidak ada atau masih kosong'));
       }
 
       const voiceConfig = await settings.getVoiceConfig(dbUser.id);
@@ -254,7 +265,9 @@ export default async function voiceRoutes(app: FastifyInstance) {
         });
       } catch (error) {
         if (error instanceof AudioConflictError) {
-          return reply.status(409).send(fail('CONFLICT', '这条回复正在生成语音'));
+          return reply
+            .status(409)
+            .send(fail('CONFLICT', 'Balasan ini sedang di-generate suaranya'));
         }
         throw error;
       }

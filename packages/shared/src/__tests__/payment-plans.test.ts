@@ -34,7 +34,7 @@ describe('RechargePageConfigSchema', () => {
   it('accepts real page copy and a six-digit theme color', () => {
     expect(
       RechargePageConfigSchema.parse({
-        title: '星尘商店',
+        title: 'Isi Binar',
         description: '为每段相遇点一盏星光',
         button_text: '立即支付',
         theme_color: '#ec4899',
@@ -49,7 +49,7 @@ describe('RechargePageConfigSchema', () => {
   it('fills independent component colors and pending hint for legacy page configurations', () => {
     expect(
       RechargePageConfigSchema.parse({
-        title: '星尘商店',
+        title: 'Isi Binar',
         description: '说明',
         button_text: '支付',
         theme_color: '#112233',
@@ -74,7 +74,7 @@ describe('RechargePageConfigSchema', () => {
     ).toBe(false);
     expect(
       RechargePageConfigSchema.safeParse({
-        title: '星尘商店',
+        title: 'Isi Binar',
         description: '说明',
         button_text: '支付',
         theme_color: '#112233',
@@ -107,7 +107,9 @@ describe('PaymentPromptDialogConfigSchema', () => {
       accent_color: '#f59e0b',
     });
 
-    expect(footer_note).toBe('点击确认后，将继续跳转到外部浏览器完成微信支付。');
+    expect(footer_note).toBe(
+      'Setelah konfirmasi, kamu akan lanjut ke browser eksternal untuk bayar.'
+    );
   });
 
   it('rejects empty copy and invalid colors', () => {

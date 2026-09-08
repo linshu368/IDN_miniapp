@@ -39,10 +39,15 @@ import { PlanCard } from '@/components/payment/plan-card';
 import { useInviteEntryStatusQuery } from '@/lib/api/invite';
 import { useCreatePaymentOrderMutation, usePaymentPlansQuery } from '@/lib/api/payment';
 import { isMarketFeatureEnabled } from '@/lib/market-features';
-import { formatYuanShort, paymentTypeLabel, safePaymentReturnTo } from '@/lib/utils/payment';
+import { CREDITS_NAME } from '@/lib/locale';
+import { formatYuanShort, safePaymentReturnTo } from '@/lib/utils/payment';
 import { openPaymentUrl, useHaptic, useTelegramBackButton } from '@/lib/telegram';
 
 const PAYMENT_TYPES: PaymentType[] = ['wxpay'];
+
+function paymentTypeLabel(type: PaymentType): string {
+  return type === 'alipay' ? 'Alipay' : 'WeChat';
+}
 
 export default function RechargePage() {
   if (!isMarketFeatureEnabled('payment')) {
@@ -167,7 +172,7 @@ function RechargePageContent() {
           size="icon"
           onClick={goBack}
           className="-ml-2 rounded-full text-muted-foreground hover:text-foreground"
-          aria-label="返回"
+          aria-label="Kembali"
         >
           <ChevronLeft className="h-5 w-5" aria-hidden />
         </Button>
@@ -186,14 +191,14 @@ function RechargePageContent() {
                 className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1 text-xs font-bold text-foreground/90 transition-colors hover:bg-secondary hover:text-foreground"
               >
                 <Receipt className="h-3.5 w-3.5" aria-hidden />
-                我的订单
+                Pesanan saya
               </Link>
               <Link
                 href="/profile/spending"
                 className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1 text-xs font-bold text-foreground/90 transition-colors hover:bg-secondary hover:text-foreground"
               >
                 <History className="h-3.5 w-3.5" aria-hidden />
-                消耗明细
+                Riwayat pemakaian
               </Link>
             </div>
           </div>
@@ -203,12 +208,14 @@ function RechargePageContent() {
           {isError ? (
             <div className="flex min-h-[180px] flex-col items-center justify-center rounded-2xl border border-destructive/25 bg-destructive/5 px-6 text-center">
               <AlertCircle className="h-7 w-7 text-destructive" aria-hidden />
-              <p className="mt-3 text-sm font-semibold text-foreground">充值套餐暂时无法加载</p>
+              <p className="mt-3 text-sm font-semibold text-foreground">
+                Paket isi ulang belum bisa dimuat
+              </p>
               <p className="mt-1 text-xs text-muted-foreground">
-                请稍后重试，当前不会创建支付订单。
+                Coba lagi nanti. Pesanan pembayaran belum dibuat.
               </p>
               <Button variant="outline" size="sm" className="mt-4" onClick={() => void refetch()}>
-                重新加载
+                Muat ulang
               </Button>
             </div>
           ) : isLoading && plans.length === 0 ? (
@@ -240,10 +247,10 @@ function RechargePageContent() {
               </span>
               <span className="min-w-0 flex-1">
                 <span className="block truncate text-[13px] font-black text-foreground">
-                  邀请好友得 2200 星尘
+                  Undang teman, dapat {CREDITS_NAME}
                 </span>
                 <span className="mt-0.5 block truncate text-[10px] text-fuchsia-100/80">
-                  分享专属链接，好友首次登录后建立邀请关系
+                  Bagikan tautan khusus, kamu dan teman bisa dapat {CREDITS_NAME}
                 </span>
               </span>
               <ChevronRight className="h-4 w-4 shrink-0 text-primary-foreground" aria-hidden />
@@ -254,7 +261,7 @@ function RechargePageContent() {
         <section className="flex justify-center">
           <span className="inline-flex items-center gap-1 text-[10px] text-muted-foreground/70">
             <ShieldCheck className="h-3 w-3 text-success" aria-hidden />
-            官方认证 · 安全支付 · 积分即时到账
+            Resmi · Pembayaran aman · {CREDITS_NAME} langsung masuk
           </span>
         </section>
       </div>
@@ -265,7 +272,7 @@ function RechargePageContent() {
         style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
       >
         <div className="flex items-center gap-3 px-4 py-3">
-          <div role="radiogroup" aria-label="支付方式" className="flex shrink-0 gap-2">
+          <div role="radiogroup" aria-label="Metode pembayaran" className="flex shrink-0 gap-2">
             {PAYMENT_TYPES.map((t) => {
               const active = paymentType === t;
               const isAlipay = t === 'alipay';
@@ -313,10 +320,10 @@ function RechargePageContent() {
             }
           >
             {createOrder.isPending
-              ? '创建中...'
+              ? 'Membuat...'
               : selectedPlan
                 ? `${pageConfig.button_text} ¥${formatYuanShort(selectedPlan.price_cents)}`
-                : '请选择套餐'}
+                : 'Pilih paket'}
           </Button>
         </div>
       </div>
@@ -333,9 +340,19 @@ function RechargePageContent() {
             <DialogHeader className="items-center text-center">
               <div className="flex w-full flex-col gap-3">
                 {[
-                  { id: 1, before: '第一步：请关闭VPN' },
-                  { id: 2, before: '第二步：请', emphasis: '直接截图', after: '保存支付码' },
-                  { id: 3, before: '第三步：', emphasis: '手动打开', after: '微信扫码支付' },
+                  { id: 1, before: 'Langkah 1: Matikan VPN' },
+                  {
+                    id: 2,
+                    before: 'Langkah 2: ',
+                    emphasis: 'Langsung screenshot',
+                    after: ' dan simpan kode bayar',
+                  },
+                  {
+                    id: 3,
+                    before: 'Langkah 3: ',
+                    emphasis: 'Buka WeChat',
+                    after: ' dan scan untuk bayar',
+                  },
                 ].map((step) => (
                   <div
                     key={step.id}
@@ -362,7 +379,7 @@ function RechargePageContent() {
                 disabled={!preparedPayment}
                 onClick={handleConfirmPayment}
               >
-                已关闭VPN，去截图保存二维码
+                VPN sudah dimatikan, screenshot dan simpan QR
               </Button>
             </DialogFooter>
           </div>
@@ -385,7 +402,7 @@ function RechargePageContent() {
             >
               <Sparkles className="h-6 w-6" aria-hidden />
             </div>
-            <DialogTitle>星尘不足</DialogTitle>
+            <DialogTitle>{CREDITS_NAME} tidak cukup</DialogTitle>
             <DialogDescription className="pt-1 leading-6 text-muted-foreground">
               {data?.insufficient_credits_notice}
             </DialogDescription>
@@ -396,7 +413,7 @@ function RechargePageContent() {
                 className="w-full rounded-xl font-bold text-primary-foreground"
                 style={{ backgroundColor: pageConfig.button_color }}
               >
-                选择套餐
+                Pilih paket
               </Button>
             </DialogClose>
             {inviteEntryEnabled ? (
@@ -409,7 +426,7 @@ function RechargePageContent() {
                   goInviteCenter();
                 }}
               >
-                邀请好友得星尘
+                Undang teman, dapat {CREDITS_NAME}
               </Button>
             ) : null}
           </DialogFooter>

@@ -95,7 +95,7 @@ export function ChatMessageList({
             className="flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-[11px] text-muted-foreground transition-colors hover:bg-secondary disabled:opacity-50"
           >
             {loadingEarlier ? <Loader2 className="h-3 w-3 animate-spin" aria-hidden /> : null}
-            {loadingEarlier ? '加载中' : '查看更早的消息'}
+            {loadingEarlier ? 'Memuat' : 'Lihat pesan sebelumnya'}
           </button>
         </div>
       ) : null}

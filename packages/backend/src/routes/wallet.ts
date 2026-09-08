@@ -50,7 +50,7 @@ export default async function walletRoutes(app: FastifyInstance) {
       if (!request.user) return reply.status(401).send(fail('UNAUTHORIZED', 'Unauthorized'));
       const { characterId } = request.params as { characterId?: string };
       if (!characterId || !UUID_PATTERN.test(characterId)) {
-        return reply.status(400).send(fail('INVALID_CHARACTER', '角色卡 ID 无效'));
+        return reply.status(400).send(fail('INVALID_CHARACTER', 'ID karakter tidak valid'));
       }
       const dbUser = await getOrCreateDbUser(request.user);
       const [quotaLimit, exhaustedDialog] = await Promise.all([
@@ -101,7 +101,7 @@ export default async function walletRoutes(app: FastifyInstance) {
       );
     } catch (error) {
       request.log.warn({ err: error, userId: dbUser.id }, 'MiniApp daily check-in failed');
-      return reply.status(409).send(fail('CHECKIN_NOT_READY', '签到还未到时间'));
+      return reply.status(409).send(fail('CHECKIN_NOT_READY', 'Check-in belum bisa diklaim'));
     }
   });
 }

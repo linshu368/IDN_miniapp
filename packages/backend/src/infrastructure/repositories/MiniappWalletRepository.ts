@@ -1,5 +1,9 @@
 import { getDomainDb } from '../../lib/supabase.js';
-import type { GetWalletBalanceData, WalletSpendingRecord } from '@miniapp/shared';
+import {
+  CREDITS_NAME,
+  type GetWalletBalanceData,
+  type WalletSpendingRecord,
+} from '@miniapp/shared';
 
 type NumericValue = string | number;
 
@@ -311,12 +315,12 @@ export class MiniappWalletRepository {
       return {
         id: row.reference_id ?? row.created_at,
         model_id: null,
-        model_display_name: '语音消费',
+        model_display_name: 'Pemakaian suara',
         charged_amount: amount,
         status: 'charged' as const,
         finish_reason: null,
         reply_outcome: null,
-        status_label: '已扣费',
+        status_label: 'Sudah dipotong',
         created_at: row.created_at,
       };
     });
@@ -425,12 +429,12 @@ export function formatSpendingStatus(
 ): string {
   const replyOutcome = readReplyOutcome(metadata);
 
-  if (status === 'pending') return '待结算';
-  if (status === 'charged' || status === 'reconciled') return '已扣费';
-  if (status === 'partial') return '余额不足，部分扣费';
-  if (status === 'free') return '本次免费';
-  if (replyOutcome === 'incomplete') return '截断未扣除';
-  if (replyOutcome === 'empty') return '生成失败，未扣除';
+  if (status === 'pending') return 'Menunggu settle';
+  if (status === 'charged' || status === 'reconciled') return 'Sudah dipotong';
+  if (status === 'partial') return `${CREDITS_NAME} kurang, dipotong sebagian`;
+  if (status === 'free') return 'Gratis';
+  if (replyOutcome === 'incomplete') return `Terpotong, ${CREDITS_NAME} tidak dipotong`;
+  if (replyOutcome === 'empty') return `Gagal generate, ${CREDITS_NAME} tidak dipotong`;
   const finishReason = typeof metadata.finish_reason === 'string' ? metadata.finish_reason : null;
   const generationStatus =
     typeof metadata.generation_status === 'string'
@@ -438,10 +442,11 @@ export function formatSpendingStatus(
       : typeof metadata.chat_status === 'string'
         ? metadata.chat_status
         : null;
-  if (finishReason && finishReason !== 'stop') return '截断未扣除';
-  if (generationStatus === 'stream_interrupted') return '截断未扣除';
-  if (generationStatus === 'upstream_error') return '生成失败，未扣除';
-  return '未扣除';
+  if (finishReason && finishReason !== 'stop') return `Terpotong, ${CREDITS_NAME} tidak dipotong`;
+  if (generationStatus === 'stream_interrupted') return `Terpotong, ${CREDITS_NAME} tidak dipotong`;
+  if (generationStatus === 'upstream_error')
+    return `Gagal generate, ${CREDITS_NAME} tidak dipotong`;
+  return 'Tidak dipotong';
 }
 
 function readReplyOutcome(

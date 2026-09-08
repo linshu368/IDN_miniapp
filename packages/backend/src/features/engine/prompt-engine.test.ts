@@ -69,9 +69,9 @@ describe('buildPrompt', () => {
     expect(messages[0]).toEqual({ role: 'system', content: CHARACTER.system_prompt });
     expect(messages[1]?.content).toBe(FIRST_MES);
     expect(messages.at(-1)?.content).toBe(
-      '##系统指令：以下为最高优先级指令。\n' +
-        '篇幅 300-500 字。\n不要给出选项。\n偏好：暂无\n' +
-        '##用户指令:等很久了吗\n'
+      '##Instruksi sistem: berikut adalah instruksi prioritas tertinggi.\n' +
+        '篇幅 300-500 字。\n不要给出选项。\n偏好：Tidak ada\n' +
+        '##Instruksi pengguna:等很久了吗\n'
     );
   });
 
@@ -144,20 +144,20 @@ describe('buildPrompt', () => {
       '你在和 路人甲 说话。',
       '路人甲，你来了。',
       '我是 路人甲',
-      '##系统指令：以下为最高优先级指令。\n' +
-        '篇幅 300-500 字。\n不要给出选项。\n偏好：暂无\n' +
-        '##用户指令:路人甲 也在听\n',
+      '##Instruksi sistem: berikut adalah instruksi prioritas tertinggi.\n' +
+        '篇幅 300-500 字。\n不要给出选项。\n偏好：Tidak ada\n' +
+        '##Instruksi pengguna:路人甲 也在听\n',
     ]);
   });
 
-  it('persona.displayName 为空时 {{user}} 回落为「你」', () => {
+  it('persona.displayName 为空时 {{user}} 回落为 kamu', () => {
     const { messages } = buildPrompt(
       input({
         persona: { displayName: null },
         history: [{ role: 'assistant', content: '你好，{{user}}。' }],
       })
     );
-    expect(messages[1]?.content).toBe('你好，你。');
+    expect(messages[1]?.content).toBe('你好，kamu。');
   });
 });
 
@@ -228,14 +228,14 @@ function botEnhancedPrompt(
     ? match.promptValue
     : (fallback?.promptValue ?? userConfig.pref_word_count);
 
-  const customInstructions = userConfig.pref_custom_instructions?.trim() || '暂无';
+  const customInstructions = userConfig.pref_custom_instructions?.trim() || 'Tidak ada';
 
   const rendered = instructions.template
     .replace(/\{\{WORD_COUNT\}\}/g, wordCountValue)
     .replace(/\{\{INTERACTION_MODE\}\}/g, interactionModeBlock)
     .replace(/\{\{USER_CUSTOM_INSTRUCTIONS\}\}/g, customInstructions);
 
-  return `##系统指令：以下为最高优先级指令。\n${rendered}\n##用户指令:${userInput}\n`;
+  return `##Instruksi sistem: berikut adalah instruksi prioritas tertinggi.\n${rendered}\n##Instruksi pengguna:${userInput}\n`;
 }
 
 describe('对拍旧 bot 实现', () => {

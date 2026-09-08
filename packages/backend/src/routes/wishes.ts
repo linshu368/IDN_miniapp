@@ -49,7 +49,12 @@ export default async function wishRoutes(app: FastifyInstance) {
     if (countChars(wishText) <= MIN_WISH_LENGTH) {
       return reply
         .status(400)
-        .send(fail('WISH_TOO_SHORT', '再多说几个字呀，不然我猜不到你想要什么样的～'));
+        .send(
+          fail(
+            'WISH_TOO_SHORT',
+            'Tulis lebih panjang dikit ya, biar aku ngerti karakter yang kamu mau~'
+          )
+        );
     }
 
     const dbUser = await getOrCreateDbUser(request.user);
@@ -68,9 +73,13 @@ export default async function wishRoutes(app: FastifyInstance) {
       if (message.includes('wish limit reached')) {
         return reply
           .status(409)
-          .send(fail('WISH_LIMIT_REACHED', '你今天的许愿次数已经用完啦，明天再来～'));
+          .send(
+            fail('WISH_LIMIT_REACHED', 'Kuota harapannya hari ini sudah habis. Coba lagi besok~')
+          );
       }
-      return reply.status(400).send(fail('WISH_CREATE_FAILED', '许愿暂时保存失败'));
+      return reply
+        .status(400)
+        .send(fail('WISH_CREATE_FAILED', 'Gagal menyimpan harapan untuk sementara'));
     }
   });
 
@@ -92,7 +101,9 @@ export default async function wishRoutes(app: FastifyInstance) {
       });
 
       if (!wish) {
-        return reply.status(404).send(fail('WISH_NOT_FOUND', '没有找到待补充的许愿'));
+        return reply
+          .status(404)
+          .send(fail('WISH_NOT_FOUND', 'Tidak ada harapan yang perlu dilengkapi'));
       }
 
       return reply.send(ok<CompleteWishRoleData>({ wish: toWishRoleData(wish) }));

@@ -47,7 +47,7 @@ export default async function favoriteRoutes(app: FastifyInstance) {
       );
     } catch (err) {
       log.sys.error({ event: 'favorites.ids.failed', err }, '/api/favorites/ids failed');
-      return reply.status(500).send(fail('INTERNAL_ERROR', '收藏状态读取失败'));
+      return reply.status(500).send(fail('INTERNAL_ERROR', 'Gagal memuat status favorit'));
     }
   });
 
@@ -110,7 +110,7 @@ export default async function favoriteRoutes(app: FastifyInstance) {
       return reply.send(ok<GetCharacterFavoritesData>({ characters }));
     } catch (err) {
       log.sys.error({ event: 'favorites.list.failed', err }, '/api/favorites failed');
-      return reply.status(500).send(fail('INTERNAL_ERROR', '收藏列表读取失败'));
+      return reply.status(500).send(fail('INTERNAL_ERROR', 'Gagal memuat daftar favorit'));
     }
   });
 
@@ -146,7 +146,9 @@ export default async function favoriteRoutes(app: FastifyInstance) {
             { event: 'favorites.update.failed', err, characterId },
             'favorite update failed'
           );
-          return reply.status(400).send(fail('FAVORITE_UPDATE_FAILED', '收藏状态更新失败'));
+          return reply
+            .status(400)
+            .send(fail('FAVORITE_UPDATE_FAILED', 'Gagal update status favorit'));
         }
       },
     });

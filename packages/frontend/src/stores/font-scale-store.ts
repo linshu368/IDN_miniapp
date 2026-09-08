@@ -11,9 +11,9 @@ const STORAGE_KEY = 'st_miniapp_font_scale';
 export type FontScale = 'small' | 'normal' | 'large';
 
 export const FONT_SCALE_OPTIONS: Array<{ id: FontScale; label: string; multiplier: number }> = [
-  { id: 'small', label: '小', multiplier: 0.92 },
-  { id: 'normal', label: '标准', multiplier: 1 },
-  { id: 'large', label: '大', multiplier: 1.12 },
+  { id: 'small', label: 'Kecil', multiplier: 0.92 },
+  { id: 'normal', label: 'Standar', multiplier: 1 },
+  { id: 'large', label: 'Besar', multiplier: 1.12 },
 ];
 
 const DEFAULT_SCALE: FontScale = 'normal';

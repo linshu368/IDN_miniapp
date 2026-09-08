@@ -1,8 +1,9 @@
 /**
  * 阶段 2 mock 入口的印尼语文案。
- *
- * C1「星尘」译名尚未锁死，这里用中性的 kredit；阶段 3 全文适配时再替换。
+ * C1 已锁：用户侧货币名 = Binar。
  */
+import { CREDITS_NAME } from '@miniapp/shared';
+
 export const MARKET_UNAVAILABLE_COPY = {
   create: {
     eyebrow: 'Create',
@@ -16,8 +17,8 @@ export const MARKET_UNAVAILABLE_COPY = {
   },
   payment: {
     eyebrow: 'Wallet',
-    title: 'Isi kredit',
-    body: 'Isi ulang belum dibuka. Dapatkan kredit lewat check-in harian atau undang teman.',
+    title: `Isi ${CREDITS_NAME}`,
+    body: `Isi ulang belum dibuka. Dapatkan ${CREDITS_NAME} lewat check-in harian atau undang teman.`,
   },
   orders: {
     eyebrow: 'Orders',
@@ -35,8 +36,8 @@ export const MARKET_UNAVAILABLE_COPY = {
     body: 'Fitur ini belum dibuka.',
   },
   insufficientCredits: {
-    title: 'Kredit tidak cukup',
-    body: 'Isi ulang belum dibuka. Check-in harian atau undang teman untuk dapat kredit, lalu coba lagi.',
+    title: `${CREDITS_NAME} tidak cukup`,
+    body: `Isi ulang belum dibuka. Check-in harian atau undang teman untuk dapat ${CREDITS_NAME}, lalu coba lagi.`,
   },
 } as const;
 

@@ -1,5 +1,6 @@
 import { FastifyInstance } from 'fastify';
 import {
+  CREDITS_NAME,
   fail,
   ok,
   resolveEffectiveSelectedModelId,
@@ -91,7 +92,7 @@ export default async function modelsRoutes(app: FastifyInstance) {
 
       const parsed = SelectModelRequestSchema.safeParse(request.body);
       if (!parsed.success) {
-        return reply.status(400).send(fail('INVALID_MODEL', '请选择有效模型'));
+        return reply.status(400).send(fail('INVALID_MODEL', 'Pilih model yang valid'));
       }
 
       const log = requestLogger(request.log, 'models');
@@ -129,7 +130,12 @@ export default async function modelsRoutes(app: FastifyInstance) {
             );
             return reply
               .status(402)
-              .send(fail('INSUFFICIENT_CREDITS', '星尘余额不足，请先充值后再切换付费模型'));
+              .send(
+                fail(
+                  'INSUFFICIENT_CREDITS',
+                  `${CREDITS_NAME} tidak cukup. Check-in harian atau undang teman dulu, lalu coba model berbayar lagi.`
+                )
+              );
           }
         }
 
@@ -154,7 +160,7 @@ export default async function modelsRoutes(app: FastifyInstance) {
           { event: 'models.select.unavailable', err: error, modelId: parsed.data.model_id },
           'unavailable model selection'
         );
-        return reply.status(400).send(fail('MODEL_UNAVAILABLE', '该模型暂不可用'));
+        return reply.status(400).send(fail('MODEL_UNAVAILABLE', 'Model ini belum tersedia'));
       }
     }
   );

@@ -16,7 +16,7 @@ export const inviteKeys = {
   stats: ['invite', 'stats'] as const,
 };
 
-/** 邀请入口显隐 + "2200星尘"提醒标签状态（我的页 / 充值页 / 星尘不足弹窗共享缓存）。 */
+/** 邀请入口显隐 + 奖励上限提醒标签状态（我的页 / 充值页 / 余额不足弹窗共享缓存）。 */
 export function useInviteEntryStatusQuery() {
   return useQuery({
     queryKey: inviteKeys.entryStatus,

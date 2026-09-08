@@ -103,8 +103,8 @@ export function ChatComposer({
           }}
           rows={1}
           disabled={disabled}
-          placeholder={generating ? '对方正在回复…' : '说点什么…'}
-          aria-label="输入消息"
+          placeholder={generating ? 'Sedang membalas…' : 'Ketik sesuatu…'}
+          aria-label="Ketik pesan"
           className={cn(
             'resize-none overflow-y-auto bg-transparent text-[15px] leading-[22px] text-foreground caret-primary',
             'placeholder:text-muted-foreground focus-visible:outline-none disabled:opacity-60',
@@ -126,7 +126,7 @@ export function ChatComposer({
             <button
               type="button"
               onClick={onStop}
-              aria-label="停止生成"
+              aria-label="Hentikan generate"
               className="flex size-10 items-center justify-center rounded-full bg-secondary text-primary shadow-[inset_0_0_0_1px_hsl(var(--border))]"
             >
               <span className="size-[15px] rounded-[4px] bg-current" aria-hidden />
@@ -136,7 +136,7 @@ export function ChatComposer({
               type="button"
               onClick={send}
               disabled={!canSend}
-              aria-label="发送"
+              aria-label="Kirim"
               className="flex size-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-[0_5px_14px_hsl(var(--primary)/0.28)] transition-opacity disabled:opacity-45 disabled:shadow-none"
             >
               {disabled ? (

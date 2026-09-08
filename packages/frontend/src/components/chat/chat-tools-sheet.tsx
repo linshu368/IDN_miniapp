@@ -26,21 +26,21 @@ type ToolsTab = 'chat' | 'voice' | 'image';
 type ToolsPanel = 'model' | 'generation' | 'voice' | null;
 
 const PANEL_TITLES: Record<Exclude<ToolsPanel, null>, string> = {
-  model: '模型选择',
-  generation: '生成偏好',
-  voice: '默认声音',
+  model: 'Pilih model',
+  generation: 'Preferensi generate',
+  voice: 'Suara default',
 };
 
 const PANEL_DESCRIPTIONS: Record<Exclude<ToolsPanel, null>, string> = {
-  model: '选择驱动对话的模型',
-  generation: '调整回复长度与自定义指令',
-  voice: '选择角色说话的声音',
+  model: 'Pilih model untuk chat',
+  generation: 'Atur panjang balasan dan instruksi kustom',
+  voice: 'Pilih suara karakter',
 };
 
 const TABS: { key: ToolsTab; label: string; icon: ComponentType<{ className?: string }> }[] = [
-  { key: 'chat', label: '对话设置', icon: MessagesSquare },
-  { key: 'voice', label: '语音设置', icon: Mic },
-  { key: 'image', label: '图片设置', icon: ImageIcon },
+  { key: 'chat', label: 'Pengaturan chat', icon: MessagesSquare },
+  { key: 'voice', label: 'Pengaturan suara', icon: Mic },
+  { key: 'image', label: 'Pengaturan gambar', icon: ImageIcon },
 ];
 
 interface ChatToolsSheetProps {
@@ -79,7 +79,7 @@ export function ChatToolsSheet({ returnTo, onCreateConversation, creating }: Cha
       <button
         type="button"
         onClick={() => setOpen(true)}
-        aria-label="工具箱"
+        aria-label="Perkakas"
         className="flex size-10 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground active:scale-95"
       >
         <WandSparkles className="size-5" aria-hidden />
@@ -92,9 +92,9 @@ export function ChatToolsSheet({ returnTo, onCreateConversation, creating }: Cha
         >
           {panel === null ? (
             <>
-              <SheetTitle className="text-[16px] font-bold text-foreground">工具箱</SheetTitle>
+              <SheetTitle className="text-[16px] font-bold text-foreground">Perkakas</SheetTitle>
               <SheetDescription className="mt-0.5 text-[12px] text-muted-foreground">
-                模型与生成偏好对你的所有角色生效
+                Model dan preferensi generate berlaku untuk semua karakter kamu
               </SheetDescription>
 
               <div className="my-4 flex gap-1 rounded-full bg-muted p-1">
@@ -120,14 +120,14 @@ export function ChatToolsSheet({ returnTo, onCreateConversation, creating }: Cha
                 <div className="space-y-2">
                   <ToolRow
                     icon={Sparkles}
-                    title="模型选择"
-                    hint={selectedModelName ?? '选择驱动这段对话的模型'}
+                    title="Pilih model"
+                    hint={selectedModelName ?? 'Pilih model untuk percakapan ini'}
                     onClick={() => setPanel('model')}
                   />
                   <ToolRow
                     icon={MessagesSquare}
-                    title="开启新对话"
-                    hint="保留当前这段，另起一段从头开始"
+                    title="Obrolan baru"
+                    hint="Simpan yang ini, mulai percakapan baru dari awal"
                     pending={creating}
                     onClick={() => {
                       setOpen(false);
@@ -136,8 +136,8 @@ export function ChatToolsSheet({ returnTo, onCreateConversation, creating }: Cha
                   />
                   <ToolRow
                     icon={SlidersHorizontal}
-                    title="生成偏好"
-                    hint="回复长度、结尾选项、自定义指令"
+                    title="Preferensi generate"
+                    hint="Panjang balasan, opsi di akhir, instruksi kustom"
                     onClick={() => setPanel('generation')}
                   />
                 </div>
@@ -157,7 +157,7 @@ export function ChatToolsSheet({ returnTo, onCreateConversation, creating }: Cha
                 <button
                   type="button"
                   onClick={() => setPanel(null)}
-                  aria-label="返回工具箱"
+                  aria-label="Kembali ke perkakas"
                   className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground transition-colors hover:text-foreground"
                 >
                   <ChevronLeft className="size-5" aria-hidden />

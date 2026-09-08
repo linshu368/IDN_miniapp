@@ -1,5 +1,5 @@
 import { FastifyInstance, FastifyReply } from 'fastify';
-import { ok, fail } from '@miniapp/shared';
+import { CREDITS_NAME, ok, fail } from '@miniapp/shared';
 import { requestLogger, type RequestLogger } from '../lib/logger.js';
 import type {
   CreatePaymentOrderRequest,
@@ -80,7 +80,12 @@ export default async function paymentRoutes(app: FastifyInstance) {
       );
       return reply
         .status(503)
-        .send(fail('PAYMENT_PLANS_UNAVAILABLE', '充值套餐暂不可用，请稍后重试'));
+        .send(
+          fail(
+            'PAYMENT_PLANS_UNAVAILABLE',
+            `Paket ${CREDITS_NAME} sementara tidak tersedia. Coba lagi nanti.`
+          )
+        );
     }
   });
 
@@ -126,7 +131,12 @@ export default async function paymentRoutes(app: FastifyInstance) {
       if (error instanceof PaymentPlansConfigError) {
         return reply
           .status(503)
-          .send(fail('PAYMENT_PLANS_UNAVAILABLE', '充值套餐暂不可用，请稍后重试'));
+          .send(
+            fail(
+              'PAYMENT_PLANS_UNAVAILABLE',
+              `Paket ${CREDITS_NAME} sementara tidak tersedia. Coba lagi nanti.`
+            )
+          );
       }
       return reply.status(400).send(fail('PAYMENT_CREATE_FAILED', message));
     }

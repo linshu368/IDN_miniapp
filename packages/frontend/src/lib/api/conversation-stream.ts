@@ -9,11 +9,12 @@
  * 契约见 packages/shared/src/api/conversations.ts。
  */
 
-import type {
-  ConversationErrorCode,
-  ConversationStreamDoneEvent,
-  ConversationStreamEvent,
-  ConversationStreamStartEvent,
+import {
+  CREDITS_NAME,
+  type ConversationErrorCode,
+  type ConversationStreamDoneEvent,
+  type ConversationStreamEvent,
+  type ConversationStreamStartEvent,
 } from '@miniapp/shared';
 import { getRawInitData, INIT_DATA_HEADER } from '@/lib/telegram/auth';
 import { createLogger } from '@/lib/logger';
@@ -80,7 +81,7 @@ async function toStreamError(response: Response): Promise<ConversationStreamErro
 
     if (readString(error, 'type') === 'insufficient_balance') {
       return new ConversationStreamError(
-        message ?? '星尘余额不足',
+        message ?? `${CREDITS_NAME} tidak cukup`,
         response.status,
         'insufficient_balance',
         {
@@ -93,14 +94,14 @@ async function toStreamError(response: Response): Promise<ConversationStreamErro
     const code = readString(error, 'code');
     if (code) {
       return new ConversationStreamError(
-        message ?? `请求失败（${response.status}）`,
+        message ?? `Permintaan gagal (${response.status})`,
         response.status,
         code
       );
     }
   }
 
-  return new ConversationStreamError(`请求失败（${response.status}）`, response.status);
+  return new ConversationStreamError(`Permintaan gagal (${response.status})`, response.status);
 }
 
 /**
@@ -181,7 +182,7 @@ export async function streamConversationTurn(options: StreamTurnOptions): Promis
 
   if (!response.ok) throw await toStreamError(response);
   if (!response.body) {
-    throw new ConversationStreamError('响应体为空', response.status, 'upstream_error');
+    throw new ConversationStreamError('Respons kosong', response.status, 'upstream_error');
   }
 
   const reader = response.body.getReader();
@@ -249,6 +250,10 @@ export async function streamConversationTurn(options: StreamTurnOptions): Promis
   }
 
   if (!finished) {
-    throw new ConversationStreamError('生成中断，请稍后重试', response.status, 'upstream_error');
+    throw new ConversationStreamError(
+      'Generasi terputus, coba lagi nanti',
+      response.status,
+      'upstream_error'
+    );
   }
 }

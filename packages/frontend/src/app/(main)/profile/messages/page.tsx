@@ -12,15 +12,15 @@ import { useTelegramBackButton } from '@/lib/telegram';
 import { formatMessageTime } from '@/lib/utils/notifications';
 
 const TABS: Array<{ scope: NotificationScope; label: string }> = [
-  { scope: 'official', label: '官方' },
-  { scope: 'personal', label: '消息' },
+  { scope: 'official', label: 'Resmi' },
+  { scope: 'personal', label: 'Pesan' },
 ];
 
 const CATEGORY_LABELS: Record<NotificationItem['category'], string> = {
-  announcement: '官方公告',
-  activity: '活动',
-  system: '系统',
-  interaction: '互动',
+  announcement: 'Pengumuman',
+  activity: 'Event',
+  system: 'Sistem',
+  interaction: 'Interaksi',
 };
 
 export default function MessageCenterPage() {
@@ -57,14 +57,14 @@ export default function MessageCenterPage() {
             size="icon"
             onClick={goBack}
             className="rounded-full text-muted-foreground hover:bg-secondary hover:text-foreground"
-            aria-label="返回"
+            aria-label="Kembali"
           >
             <ChevronLeft className="h-5 w-5" aria-hidden />
           </Button>
-          <h1 className="text-base font-bold tracking-wide">消息中心</h1>
+          <h1 className="text-base font-bold tracking-wide">Pesan</h1>
         </div>
 
-        <div role="tablist" aria-label="消息分类" className="flex gap-1 px-3">
+        <div role="tablist" aria-label="Kategori pesan" className="flex gap-1 px-3">
           {TABS.map((tab) => {
             const active = tab.scope === scope;
             return (
@@ -99,19 +99,19 @@ export default function MessageCenterPage() {
         {query.isLoading ? (
           <div className="flex items-center justify-center py-16 text-muted-foreground">
             <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden />
-            加载中
+            Memuat
           </div>
         ) : query.isError ? (
           <div className="flex flex-1 flex-col items-center justify-center gap-3 py-20 text-center">
             <RefreshCw className="h-8 w-8 text-muted-foreground/60" aria-hidden />
-            <p className="text-[13px] font-medium text-muted-foreground">消息暂时无法加载</p>
+            <p className="text-[13px] font-medium text-muted-foreground">Pesan belum bisa dimuat</p>
             <Button
               variant="outline"
               size="sm"
               onClick={() => void query.refetch()}
               className="rounded-full border-border bg-card text-muted-foreground hover:bg-secondary hover:text-foreground"
             >
-              重新加载
+              Muat ulang
             </Button>
           </div>
         ) : notifications.length === 0 ? (
@@ -141,7 +141,7 @@ function MessageCard({ item }: { item: NotificationItem }) {
       <h2 className="mt-2.5 flex items-start gap-1.5 text-[15px] font-bold leading-snug tracking-tight text-foreground">
         {item.is_read ? null : (
           <span
-            aria-label="未读"
+            aria-label="Belum dibaca"
             className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-destructive"
           />
         )}
@@ -163,10 +163,12 @@ function EmptyState({ scope }: { scope: NotificationScope }) {
         <Icon className="h-8 w-8 opacity-50" aria-hidden />
       </div>
       <p className="text-[13px] font-bold text-foreground">
-        {official ? '暂无官方消息' : '暂无消息'}
+        {official ? 'Belum ada pesan resmi' : 'Belum ada pesan'}
       </p>
       <p className="text-[12px]">
-        {official ? '官方公告发布后会出现在这里。' : '系统通知和互动消息会出现在这里。'}
+        {official
+          ? 'Pengumuman akan muncul di sini.'
+          : 'Notifikasi sistem dan interaksi akan muncul di sini.'}
       </p>
     </div>
   );

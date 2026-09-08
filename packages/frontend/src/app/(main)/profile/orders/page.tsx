@@ -19,22 +19,35 @@ import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
 import { usePaymentOrdersInfiniteQuery } from '@/lib/api/payment';
 import { isMarketFeatureEnabled } from '@/lib/market-features';
-import {
-  formatNumber,
-  formatYuanShort,
-  orderStatusLabel,
-  paymentTypeLabel,
-} from '@/lib/utils/payment';
+import { CREDITS_NAME } from '@/lib/locale';
+import { formatNumber, formatYuanShort } from '@/lib/utils/payment';
 import { useHaptic, useTelegramBackButton } from '@/lib/telegram';
 
 type TabKey = 'all' | 'completed' | 'pending' | 'expired';
 
 const TABS: Array<{ key: TabKey; label: string }> = [
-  { key: 'all', label: '全部' },
-  { key: 'completed', label: '已完成' },
-  { key: 'pending', label: '待支付' },
-  { key: 'expired', label: '已过期' },
+  { key: 'all', label: 'Semua' },
+  { key: 'completed', label: 'Selesai' },
+  { key: 'pending', label: 'Menunggu bayar' },
+  { key: 'expired', label: 'Kedaluwarsa' },
 ];
+
+function paymentTypeLabel(type: PaymentOrder['payment_type']): string {
+  return type === 'alipay' ? 'Alipay' : 'WeChat';
+}
+
+function orderStatusLabel(status: PaymentOrderStatus): string {
+  switch (status) {
+    case 'pending':
+      return 'Menunggu bayar';
+    case 'completed':
+      return 'Berhasil';
+    case 'expired':
+      return 'Kedaluwarsa';
+    case 'failed':
+      return 'Gagal';
+  }
+}
 
 function tabToStatus(tab: TabKey): PaymentOrderStatus | 'all' {
   return tab === 'all' ? 'all' : tab;
@@ -86,16 +99,16 @@ function OrdersPageContent() {
           size="icon"
           onClick={goBack}
           className="rounded-full text-muted-foreground hover:text-foreground hover:bg-secondary"
-          aria-label="返回"
+          aria-label="Kembali"
         >
           <ChevronLeft className="h-5 w-5" aria-hidden />
         </Button>
-        <h1 className="text-base font-bold tracking-wide">我的订单</h1>
+        <h1 className="text-base font-bold tracking-wide">Pesanan saya</h1>
       </header>
 
       <div
         role="tablist"
-        aria-label="订单筛选"
+        aria-label="Filter pesanan"
         className="flex gap-2 border-b border-border px-4 py-3 bg-background/60 backdrop-blur-md"
       >
         {TABS.map((t) => {
@@ -125,7 +138,7 @@ function OrdersPageContent() {
       <section className="flex flex-1 flex-col gap-3 px-4 py-4">
         {query.isLoading && items.length === 0 ? (
           <div className="flex items-center justify-center py-16 text-muted-foreground">
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden /> 加载中
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden /> Memuat
           </div>
         ) : items.length === 0 ? (
           <EmptyState tab={tab} />
@@ -146,7 +159,7 @@ function OrdersPageContent() {
 
         {query.isFetchingNextPage ? (
           <div className="flex items-center justify-center py-4 text-xs text-muted-foreground">
-            <Loader2 className="mr-2 h-3 w-3 animate-spin" aria-hidden /> 加载更多
+            <Loader2 className="mr-2 h-3 w-3 animate-spin" aria-hidden /> Memuat lebih banyak
           </div>
         ) : !query.hasNextPage && items.length > 0 ? (
           <div className="py-4 text-center text-xs text-muted-foreground/60 font-medium tracking-widest">
@@ -170,12 +183,12 @@ function OrdersPageContent() {
 function EmptyState({ tab }: { tab: TabKey }) {
   const text =
     tab === 'completed'
-      ? '暂无已完成的订单'
+      ? 'Belum ada pesanan selesai'
       : tab === 'pending'
-        ? '暂无待支付的订单'
+        ? 'Belum ada pesanan menunggu bayar'
         : tab === 'expired'
-          ? '暂无已过期的订单'
-          : '这里空空如也';
+          ? 'Belum ada pesanan kedaluwarsa'
+          : 'Masih kosong';
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-3 py-20 text-center text-muted-foreground">
       <div className="rounded-full bg-card p-4 mb-2">
@@ -219,7 +232,7 @@ function OrderRow({ order, onOpen }: { order: PaymentOrder; onOpen: () => void }
             </span>
           </div>
           <div className="mt-1 text-xs text-muted-foreground">
-            {paymentTypeLabel(order.payment_type)} · {formatNumber(total)} 星尘
+            {paymentTypeLabel(order.payment_type)} · {formatNumber(total)} {CREDITS_NAME}
           </div>
           <div className="mt-0.5 text-[10px] text-muted-foreground/70 font-medium uppercase tracking-wider">
             {formatDateTime(order.created_at)}
@@ -278,7 +291,7 @@ function OrderDetail({ order, onClose }: { order: PaymentOrder; onClose: () => v
       <div aria-hidden className="mx-auto h-1 w-12 rounded-full bg-border mb-2" />
 
       <div className="flex items-center justify-between">
-        <SheetTitle className="text-lg font-bold text-foreground">订单明细</SheetTitle>
+        <SheetTitle className="text-lg font-bold text-foreground">Detail pesanan</SheetTitle>
         <span
           className={cn(
             'rounded-full px-3 py-1 text-[11px] font-bold border border-border',
@@ -299,25 +312,28 @@ function OrderDetail({ order, onClose }: { order: PaymentOrder; onClose: () => v
       </div>
 
       <div className="divide-y divide-border rounded-[20px] border border-border bg-card">
-        <DetailRow label="主积分" value={`${formatNumber(order.credits_amount)} 星尘`} />
+        <DetailRow
+          label={`${CREDITS_NAME} utama`}
+          value={`${formatNumber(order.credits_amount)} ${CREDITS_NAME}`}
+        />
         {order.bonus_credits > 0 ? (
           <DetailRow
-            label="赠送积分"
-            value={`+${formatNumber(order.bonus_credits)} 星尘`}
+            label={`${CREDITS_NAME} bonus`}
+            value={`+${formatNumber(order.bonus_credits)} ${CREDITS_NAME}`}
             valueClass="text-rose"
           />
         ) : null}
         <DetailRow
-          label="合计到账"
-          value={`${formatNumber(total)} 星尘`}
+          label="Total masuk"
+          value={`${formatNumber(total)} ${CREDITS_NAME}`}
           valueClass="font-bold text-primary"
         />
-        <DetailRow label="创建时间" value={formatDateTime(order.created_at)} />
+        <DetailRow label="Waktu dibuat" value={formatDateTime(order.created_at)} />
         {order.paid_at ? (
-          <DetailRow label="支付时间" value={formatDateTime(order.paid_at)} />
+          <DetailRow label="Waktu bayar" value={formatDateTime(order.paid_at)} />
         ) : null}
         <DetailRow
-          label="订单号"
+          label="No. pesanan"
           value={
             <CopyableText
               value={order.id}
@@ -328,7 +344,7 @@ function OrderDetail({ order, onClose }: { order: PaymentOrder; onClose: () => v
         />
         {order.provider_transaction_id ? (
           <DetailRow
-            label="渠道流水"
+            label="ID transaksi"
             value={
               <CopyableText
                 value={order.provider_transaction_id}
@@ -345,7 +361,7 @@ function OrderDetail({ order, onClose }: { order: PaymentOrder; onClose: () => v
         onClick={onClose}
         className="mt-4 h-12 w-full rounded-2xl bg-card text-[15px] font-bold text-foreground hover:bg-secondary border border-border"
       >
-        关闭
+        Tutup
       </Button>
     </div>
   );
@@ -385,7 +401,7 @@ function CopyableText({
     >
       <span>{value}</span>
       <Copy className="h-3 w-3 shrink-0" aria-hidden />
-      {copied ? <span className="text-[10px] text-success font-bold ml-1">已复制</span> : null}
+      {copied ? <span className="text-[10px] text-success font-bold ml-1">Disalin</span> : null}
     </button>
   );
 }

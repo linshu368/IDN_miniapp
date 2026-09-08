@@ -10,7 +10,7 @@ export function ChatRegenerateButton({
   onRegenerate,
   pending,
   disabled,
-  label = '换一个回复',
+  label = 'Balasan lain',
 }: {
   onRegenerate: () => void;
   pending: boolean;

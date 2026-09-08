@@ -46,9 +46,11 @@ export function ChatSessionDrawer({
       >
         <div className="flex h-full flex-col">
           <div className="border-b border-border/60 px-5 pb-4 pt-[calc(env(safe-area-inset-top)+1rem)]">
-            <SheetTitle className="text-base font-semibold text-foreground">对话记录</SheetTitle>
+            <SheetTitle className="text-base font-semibold text-foreground">
+              Riwayat percakapan
+            </SheetTitle>
             <SheetDescription className="mt-0.5 text-xs text-muted-foreground">
-              与这个角色的历史对话
+              Riwayat chat dengan karakter ini
             </SheetDescription>
           </div>
 
@@ -56,12 +58,12 @@ export function ChatSessionDrawer({
             {query.isLoading ? (
               <div className="flex items-center justify-center py-8 text-xs text-muted-foreground">
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden />
-                加载中
+                Memuat
               </div>
             ) : sessions.length === 0 ? (
               <div className="flex flex-col items-center justify-center gap-1 py-8 text-xs text-muted-foreground">
                 <MessageSquare className="h-6 w-6 opacity-40" aria-hidden />
-                <span>暂无对话记录</span>
+                <span>Belum ada percakapan</span>
               </div>
             ) : (
               sessions.map((session) => (
@@ -123,7 +125,10 @@ function SessionRow({
           <button type="button" onClick={onOpen} className="min-w-0 flex-1 text-left">
             <span className="flex min-w-0 items-center gap-1">
               {session.pinned_at ? (
-                <Pin className="size-3 shrink-0 fill-current text-primary" aria-label="已置顶" />
+                <Pin
+                  className="size-3 shrink-0 fill-current text-primary"
+                  aria-label="Disematkan"
+                />
               ) : null}
               <span className="truncate text-sm font-medium text-foreground">
                 {resolveSessionTitle(session.title, characterName)}
@@ -134,16 +139,20 @@ function SessionRow({
             </span>
           </button>
           <SessionActionButton
-            label={session.pinned_at ? '取消置顶' : '置顶'}
+            label={session.pinned_at ? 'Lepas sematan' : 'Sematkan'}
             onClick={actions.togglePin}
             density="compact"
           >
             {session.pinned_at ? <PinOff aria-hidden /> : <Pin aria-hidden />}
           </SessionActionButton>
-          <SessionActionButton label="重命名" onClick={actions.startRename} density="compact">
+          <SessionActionButton label="Ganti nama" onClick={actions.startRename} density="compact">
             <Pencil aria-hidden />
           </SessionActionButton>
-          <SessionActionButton label="删除" onClick={actions.toggleDeleteConfirm} density="compact">
+          <SessionActionButton
+            label="Hapus"
+            onClick={actions.toggleDeleteConfirm}
+            density="compact"
+          >
             <Trash2 aria-hidden />
           </SessionActionButton>
         </div>
@@ -157,7 +166,7 @@ function SessionRow({
 }
 
 function formatSessionMeta(session: ChatSession): string {
-  const count = `${session.message_count} 条`;
+  const count = `${session.message_count} pesan`;
   if (!session.last_message_at) return count;
 
   const at = new Date(session.last_message_at);
@@ -170,8 +179,16 @@ function formatSessionMeta(session: ChatSession): string {
     at.getDate() === now.getDate();
 
   const stamp = sameDay
-    ? at.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })
-    : at.toLocaleDateString('zh-CN', { month: 'numeric', day: 'numeric' });
+    ? at.toLocaleTimeString('id-ID', {
+        hour: '2-digit',
+        minute: '2-digit',
+        timeZone: 'Asia/Jakarta',
+      })
+    : at.toLocaleDateString('id-ID', {
+        month: 'numeric',
+        day: 'numeric',
+        timeZone: 'Asia/Jakarta',
+      });
 
   return `${stamp} · ${count}`;
 }

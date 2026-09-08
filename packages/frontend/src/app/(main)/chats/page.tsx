@@ -33,18 +33,18 @@ import { chatEntryPath } from '@/lib/chat-entry';
 type ChatsTab = 'history' | 'favorites';
 
 const TABS: { key: ChatsTab; label: string }[] = [
-  { key: 'history', label: '历史聊天记录' },
-  { key: 'favorites', label: '收藏角色卡' },
+  { key: 'history', label: 'Riwayat' },
+  { key: 'favorites', label: 'Favorit' },
 ];
 
 const TAB_COPY: Record<ChatsTab, { title: string; description: string }> = {
   history: {
-    title: '历史聊天',
-    description: '继续最近与角色的对话，上下文会完整保留。',
+    title: 'Riwayat',
+    description: 'Lanjut chat terakhir sama karakter. Konteksnya tetap lengkap.',
   },
   favorites: {
-    title: '收藏角色卡',
-    description: '你收藏的角色都在这里，点开即可继续聊天。',
+    title: 'Favorit',
+    description: 'Karakter favorit kamu ada di sini. Ketuk untuk lanjut chat.',
   },
 };
 
@@ -62,7 +62,7 @@ export default function ChatsPage() {
       <div
         className="mx-auto mb-5 flex max-w-2xl gap-1 rounded-full border border-border bg-card p-1"
         role="tablist"
-        aria-label="对话与收藏"
+        aria-label="Percakapan dan favorit"
       >
         {TABS.map((item) => {
           const active = item.key === tab;
@@ -97,7 +97,9 @@ function ConversationHistoryList() {
 
   return (
     <section className="mx-auto max-w-2xl space-y-2">
-      {isLoading && sessions.length === 0 ? <HistoryHint>正在读取历史对话…</HistoryHint> : null}
+      {isLoading && sessions.length === 0 ? (
+        <HistoryHint>Sedang memuat riwayat…</HistoryHint>
+      ) : null}
 
       {isError ? <HistoryError onRetry={() => void refetch()} /> : null}
 
@@ -124,7 +126,7 @@ function ConversationHistoryRow({ session }: { session: ChatSession }) {
   const avatarUrl = character?.avatar_url ? lobbyImageUrl(character.avatar_url) : null;
   // 回落到角色名而不是摘要：这里跨角色，先看是谁；摘要已经占了第二行，标题再放一遍是重复。
   // 角色内抽屉的口径不同（那边回落到摘要），因为那边每行都是同一个角色。
-  const name = resolveSessionTitle(session.title, character?.name ?? '对话');
+  const name = resolveSessionTitle(session.title, character?.name ?? 'Percakapan');
 
   if (actions.editing) {
     return (
@@ -145,7 +147,7 @@ function ConversationHistoryRow({ session }: { session: ChatSession }) {
         <Link
           href={chatEntryPath(session.character_id, { sessionId: session.id })}
           prefetch={false}
-          aria-label={`继续与 ${name} 的对话`}
+          aria-label={`Lanjut chat dengan ${name}`}
           className="absolute inset-0 rounded-3xl"
         />
         <span className="relative h-12 w-12 shrink-0 overflow-hidden rounded-2xl bg-secondary">
@@ -168,7 +170,10 @@ function ConversationHistoryRow({ session }: { session: ChatSession }) {
           <span className="flex items-center gap-3">
             <span className="flex min-w-0 flex-1 items-center gap-1">
               {session.pinned_at ? (
-                <Pin className="size-3 shrink-0 fill-current text-primary" aria-label="已置顶" />
+                <Pin
+                  className="size-3 shrink-0 fill-current text-primary"
+                  aria-label="Disematkan"
+                />
               ) : null}
               <span className="truncate font-semibold">{name}</span>
             </span>
@@ -177,21 +182,21 @@ function ConversationHistoryRow({ session }: { session: ChatSession }) {
             </time>
           </span>
           <span className="mt-1 block truncate text-sm text-muted-foreground">
-            {session.last_message_preview || '暂无消息摘要'}
+            {session.last_message_preview || 'Belum ada ringkasan'}
           </span>
         </span>
 
         <span className="relative z-10 flex shrink-0 items-center">
           <SessionActionButton
-            label={session.pinned_at ? '取消置顶' : '置顶'}
+            label={session.pinned_at ? 'Lepas sematan' : 'Sematkan'}
             onClick={actions.togglePin}
           >
             {session.pinned_at ? <PinOff aria-hidden /> : <Pin aria-hidden />}
           </SessionActionButton>
-          <SessionActionButton label="重命名" onClick={actions.startRename}>
+          <SessionActionButton label="Ganti nama" onClick={actions.startRename}>
             <Pencil aria-hidden />
           </SessionActionButton>
-          <SessionActionButton label="删除" onClick={actions.toggleDeleteConfirm}>
+          <SessionActionButton label="Hapus" onClick={actions.toggleDeleteConfirm}>
             <Trash2 aria-hidden />
           </SessionActionButton>
         </span>
@@ -250,7 +255,7 @@ function HistoryRow({
           </time>
         </span>
         <span className="mt-1 block truncate text-sm text-muted-foreground">
-          {preview || '暂无消息摘要'}
+          {preview || 'Belum ada ringkasan'}
         </span>
       </span>
       <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground/70" />
@@ -269,14 +274,14 @@ function HistoryHint({ children }: { children: React.ReactNode }) {
 function HistoryError({ onRetry }: { onRetry: () => void }) {
   return (
     <div className="rounded-3xl border border-destructive/30 bg-destructive/10 p-5">
-      <p className="text-sm text-destructive">历史聊天加载失败，请稍后重试。</p>
+      <p className="text-sm text-destructive">Gagal memuat. Coba lagi nanti.</p>
       <button
         type="button"
         onClick={onRetry}
         className="mt-3 inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition active:scale-95"
       >
         <RefreshCw className="h-4 w-4" />
-        重试
+        Coba lagi
       </button>
     </div>
   );
@@ -286,13 +291,15 @@ function HistoryEmpty() {
   return (
     <div className="rounded-3xl border border-border bg-card p-8 text-center">
       <MessageCircle className="mx-auto h-9 w-9 text-primary" />
-      <h2 className="mt-3 font-semibold">还没有有效对话</h2>
-      <p className="mt-1 text-sm text-muted-foreground">与角色至少发送一句消息后会显示在这里。</p>
+      <h2 className="mt-3 font-semibold">Belum ada percakapan</h2>
+      <p className="mt-1 text-sm text-muted-foreground">
+        Kirim minimal satu pesan ke karakter, baru muncul di sini.
+      </p>
       <Link
         href="/"
         className="mt-4 inline-flex rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition active:scale-95"
       >
-        去选择角色
+        Pilih karakter
       </Link>
     </div>
   );
@@ -306,7 +313,7 @@ function FavoritesList() {
     return (
       <section className="mx-auto max-w-2xl space-y-2">
         <div className="rounded-3xl border border-border bg-card p-8 text-center text-sm text-muted-foreground">
-          正在读取收藏…
+          Sedang memuat favorit…
         </div>
       </section>
     );
@@ -316,14 +323,14 @@ function FavoritesList() {
     return (
       <section className="mx-auto max-w-2xl">
         <div className="rounded-3xl border border-destructive/30 bg-destructive/10 p-5">
-          <p className="text-sm text-destructive">收藏列表加载失败，请稍后重试。</p>
+          <p className="text-sm text-destructive">Gagal memuat. Coba lagi nanti.</p>
           <button
             type="button"
             onClick={() => void refetch()}
             className="mt-3 inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition active:scale-95"
           >
             <RefreshCw className="h-4 w-4" />
-            重试
+            Coba lagi
           </button>
         </div>
       </section>
@@ -335,15 +342,15 @@ function FavoritesList() {
       <section className="mx-auto max-w-2xl">
         <div className="rounded-3xl border border-border bg-card p-8 text-center">
           <Heart className="mx-auto h-9 w-9 text-rose" />
-          <h2 className="mt-3 font-semibold">还没有收藏角色卡</h2>
+          <h2 className="mt-3 font-semibold">Belum ada favorit</h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            在首页或角色详情里点心形，收藏的角色就会出现在这里。
+            Ketuk hati di lobby atau di detail karakter, nanti muncul di sini.
           </p>
           <Link
             href="/"
             className="mt-4 inline-flex rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition active:scale-95"
           >
-            去首页浏览角色
+            Lihat karakter di Lobby
           </Link>
         </div>
       </section>
@@ -363,7 +370,7 @@ function FavoritesList() {
             <Link
               href={chatEntryPath(character.id)}
               prefetch={false}
-              aria-label={`进入 ${character.name} 的聊天`}
+              aria-label={`Masuk chat ${character.name}`}
               className="absolute inset-0 rounded-3xl"
             />
             <span className="relative h-12 w-12 shrink-0 overflow-hidden rounded-2xl bg-secondary">
@@ -384,7 +391,7 @@ function FavoritesList() {
             <span className="min-w-0 flex-1">
               <span className="block truncate font-semibold">{character.name}</span>
               <span className="mt-1 block truncate text-sm text-muted-foreground">
-                {character.description?.trim() || '暂无角色简介'}
+                {character.description?.trim() || 'Belum ada bio karakter'}
               </span>
             </span>
             <FavoriteButton characterId={character.id} variant="header" className="relative z-10" />
@@ -400,7 +407,15 @@ function formatActivityTime(value: string): string {
   if (Number.isNaN(date.getTime())) return '';
   const now = new Date();
   if (date.toDateString() === now.toDateString()) {
-    return date.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+    return date.toLocaleTimeString('id-ID', {
+      hour: '2-digit',
+      minute: '2-digit',
+      timeZone: 'Asia/Jakarta',
+    });
   }
-  return date.toLocaleDateString('zh-CN', { month: 'numeric', day: 'numeric' });
+  return date.toLocaleDateString('id-ID', {
+    month: 'numeric',
+    day: 'numeric',
+    timeZone: 'Asia/Jakarta',
+  });
 }

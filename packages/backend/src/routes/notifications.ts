@@ -35,7 +35,7 @@ export default async function notificationRoutes(app: FastifyInstance) {
     if (!request.user) return reply.status(401).send(fail('UNAUTHORIZED', 'Unauthorized'));
     const query = request.query as { scope?: string; cursor?: string };
     const scope = query.scope === undefined ? 'official' : parseNotificationScope(query.scope);
-    if (!scope) return reply.status(400).send(fail('INVALID_SCOPE', '消息分类无效'));
+    if (!scope) return reply.status(400).send(fail('INVALID_SCOPE', 'Kategori pesan tidak valid'));
 
     const user = await getOrCreateDbUser(request.user);
     const db = getDomainDb('miniapp_features');
@@ -96,14 +96,15 @@ export default async function notificationRoutes(app: FastifyInstance) {
       let scope: NotificationScope | undefined;
       if (body.scope !== undefined) {
         const parsed = parseNotificationScope(body.scope);
-        if (!parsed) return reply.status(400).send(fail('INVALID_SCOPE', '消息分类无效'));
+        if (!parsed)
+          return reply.status(400).send(fail('INVALID_SCOPE', 'Kategori pesan tidak valid'));
         scope = parsed;
       }
       const ids = Array.isArray(body.ids)
         ? [...new Set(body.ids.filter((id) => UUID_RE.test(id)))]
         : [];
       if (!scope && ids.length === 0) {
-        return reply.status(400).send(fail('INVALID_READ_TARGET', '请选择要标记的消息'));
+        return reply.status(400).send(fail('INVALID_READ_TARGET', 'Pilih pesan yang mau ditandai'));
       }
 
       const user = await getOrCreateDbUser(request.user);

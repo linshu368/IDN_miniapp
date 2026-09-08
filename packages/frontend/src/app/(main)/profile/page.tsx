@@ -43,6 +43,7 @@ import {
 } from '@/lib/api/settings';
 import { getRawInitData } from '@/lib/telegram/auth';
 import { formatNumber } from '@/lib/utils/payment';
+import { CREDITS_NAME } from '@/lib/locale';
 import { useUserProfileStore } from '@/stores/user-profile-store';
 
 export default function ProfilePage() {
@@ -143,9 +144,9 @@ export default function ProfilePage() {
     setAvatarError(null);
     try {
       if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type)) {
-        throw new Error('仅支持 PNG、JPEG 或 WebP 图片');
+        throw new Error('Hanya mendukung gambar PNG, JPEG, atau WebP');
       }
-      if (file.size > 2 * 1024 * 1024) throw new Error('头像文件不能超过 2MB');
+      if (file.size > 2 * 1024 * 1024) throw new Error('File avatar tidak boleh lebih dari 2MB');
       const dataBase64 = await readFileAsBase64(file);
       await setAvatar.mutateAsync({
         source: 'upload',
@@ -154,21 +155,21 @@ export default function ProfilePage() {
       });
       setAvatarMenuOpen(false);
     } catch (error) {
-      setAvatarError(error instanceof Error ? error.message : '头像上传失败');
+      setAvatarError(error instanceof Error ? error.message : 'Gagal mengunggah avatar');
     } finally {
       if (avatarInputRef.current) avatarInputRef.current.value = '';
     }
   };
 
   const importAvatarUrl = async () => {
-    const url = window.prompt('粘贴 HTTPS 图片链接（PNG、JPEG 或 WebP，最大 2MB）');
+    const url = window.prompt('Tempel tautan gambar HTTPS (PNG, JPEG, atau WebP, maks. 2MB)');
     if (!url?.trim()) return;
     setAvatarError(null);
     try {
       await setAvatar.mutateAsync({ source: 'url', url: url.trim() });
       setAvatarMenuOpen(false);
     } catch (error) {
-      setAvatarError(error instanceof Error ? error.message : '头像导入失败');
+      setAvatarError(error instanceof Error ? error.message : 'Gagal mengimpor avatar');
     }
   };
 
@@ -178,7 +179,7 @@ export default function ProfilePage() {
       await patchSettings.mutateAsync({ avatar_url: null });
       setAvatarMenuOpen(false);
     } catch (error) {
-      setAvatarError(error instanceof Error ? error.message : '恢复默认头像失败');
+      setAvatarError(error instanceof Error ? error.message : 'Gagal mengembalikan avatar default');
     }
   };
 
@@ -205,7 +206,7 @@ export default function ProfilePage() {
               type="button"
               onClick={() => setCheckinToast(null)}
               className="absolute right-3 top-3 z-10 rounded-full bg-secondary p-1.5 text-muted-foreground transition hover:bg-accent hover:text-foreground"
-              aria-label="关闭签到提示"
+              aria-label="Tutup notifikasi check-in"
             >
               <X className="h-4 w-4" aria-hidden />
             </button>
@@ -218,10 +219,10 @@ export default function ProfilePage() {
                   DAILY CHECK-IN
                 </p>
                 <h2 className="mt-1 text-base font-black tracking-tight text-foreground">
-                  签到成功
+                  Check-in berhasil
                 </h2>
                 <p className="mt-1 text-sm font-medium text-muted-foreground">
-                  星尘 +{checkinToast.reward} 已到账。
+                  +{checkinToast.reward} {CREDITS_NAME} sudah masuk.
                 </p>
               </div>
             </div>
@@ -238,7 +239,7 @@ export default function ProfilePage() {
               setAvatarError(null);
               setAvatarMenuOpen((open) => !open);
             }}
-            aria-label="更换头像"
+            aria-label="Ganti avatar"
             aria-expanded={avatarMenuOpen}
             aria-haspopup="menu"
             className="group relative block rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-4 focus-visible:ring-offset-background"
@@ -277,7 +278,7 @@ export default function ProfilePage() {
                   className="rounded-full border-border bg-card text-foreground hover:bg-secondary hover:text-foreground"
                 >
                   <ImageUp aria-hidden />
-                  上传图片
+                  Unggah gambar
                 </Button>
                 <Button
                   type="button"
@@ -289,7 +290,7 @@ export default function ProfilePage() {
                   className="rounded-full border-border bg-card text-foreground hover:bg-secondary hover:text-foreground"
                 >
                   <LinkIcon aria-hidden />
-                  导入链接
+                  Impor tautan
                 </Button>
               </div>
               {userSettings.data?.settings.avatar_source === 'custom' ? (
@@ -303,7 +304,7 @@ export default function ProfilePage() {
                   className="mt-1 w-full rounded-full text-muted-foreground hover:bg-secondary hover:text-foreground"
                 >
                   <RotateCcw aria-hidden />
-                  恢复跟随 Telegram
+                  Kembali ke foto Telegram
                 </Button>
               ) : null}
               {avatarError ? (
@@ -325,7 +326,7 @@ export default function ProfilePage() {
           size="sm"
           disabled={!checkin?.can_claim || claimCheckin.isPending}
           onClick={() => void claimDailyCheckin()}
-          aria-label="每日签到"
+          aria-label="Check-in harian"
           className="h-8 rounded-full border border-border bg-card/70 px-3.5 text-[12px] font-semibold text-muted-foreground shadow-none hover:bg-secondary hover:text-foreground disabled:opacity-100"
         >
           {checkin?.can_claim ? (
@@ -334,10 +335,10 @@ export default function ProfilePage() {
             <Check className="mr-1.5 h-3.5 w-3.5 shrink-0" aria-hidden />
           )}
           {claimCheckin.isPending
-            ? '领取中'
+            ? 'Mengambil…'
             : checkin?.can_claim
-              ? `签到 · +${formatNumber(checkin.reward_credits)}`
-              : '今日已签到'}
+              ? `Check-in · +${formatNumber(checkin.reward_credits)}`
+              : 'Sudah check-in hari ini'}
         </Button>
 
         <div className="text-center">
@@ -359,7 +360,7 @@ export default function ProfilePage() {
                 }
               }}
               className="h-10 w-56 text-center text-xl font-bold bg-card border-border text-foreground focus-visible:ring-ring"
-              aria-label="编辑显示名"
+              aria-label="Edit nama tampilan"
             />
           ) : (
             <Button
@@ -367,7 +368,7 @@ export default function ProfilePage() {
               size="sm"
               onClick={startEdit}
               className="group inline-flex h-auto items-center gap-1.5 px-3 py-1.5 text-xl font-bold text-foreground transition-all hover:bg-secondary rounded-xl"
-              aria-label="编辑显示名"
+              aria-label="Edit nama tampilan"
             >
               <span>{displayName}</span>
               <Pencil
@@ -377,7 +378,7 @@ export default function ProfilePage() {
             </Button>
           )}
           <div className="mt-1 text-xs font-medium text-muted-foreground tracking-wider uppercase">
-            ID · {telegramUserId ?? '未连接'}
+            ID · {telegramUserId ?? 'Belum terhubung'}
           </div>
         </div>
       </section>
@@ -392,29 +393,29 @@ export default function ProfilePage() {
           <div className="relative flex items-start justify-between gap-3">
             <div className="min-w-0">
               <p className="text-[11px] font-semibold tracking-[0.2em] text-muted-foreground">
-                星尘余额
+                Saldo {CREDITS_NAME}
               </p>
               <p className="mt-2 flex items-baseline gap-1.5">
                 <span className="text-[34px] font-black leading-none tabular-nums tracking-tight text-foreground">
                   {formatNumber(credits)}
                 </span>
-                <span className="text-xs font-medium text-muted-foreground">星尘</span>
+                <span className="text-xs font-medium text-muted-foreground">{CREDITS_NAME}</span>
               </p>
             </div>
             <Link
               href="/profile/recharge"
-              aria-label="前往星尘充值"
+              aria-label={`Isi ${CREDITS_NAME}`}
               className="inline-flex shrink-0 items-center gap-1 rounded-full border border-primary/30 bg-primary/15 px-3 py-1.5 text-[12px] font-bold text-primary transition hover:bg-primary/25"
             >
               <Sparkles className="h-3.5 w-3.5" aria-hidden />
-              星尘充值
+              Isi {CREDITS_NAME}
             </Link>
           </div>
         </div>
       </section>
 
-      {/* 邀请中心：裂变优先入口，位于余额卡与常规列表之间（PRD：星尘余额下方）。
-          显隐由运营总开关控制；"2200星尘"提醒标签在首次进入邀请中心后由服务端字段翻转消失 */}
+      {/* 邀请中心：裂变优先入口，位于余额卡与常规列表之间。
+          显隐由运营总开关控制；奖励上限标签在首次进入邀请中心后由服务端字段翻转消失 */}
       {inviteEntry.data?.entry_enabled ? (
         <section className="relative z-10 mt-4 px-5">
           <Link
@@ -427,20 +428,24 @@ export default function ProfilePage() {
             <span className="min-w-0 flex-1">
               <span className="flex items-center gap-2">
                 <span className="truncate text-[15px] font-bold tracking-tight text-foreground">
-                  邀请中心
+                  Pusat undangan
                 </span>
                 {inviteEntry.data.center_entered ? null : (
                   <span className="shrink-0 rounded-full bg-gradient-to-r from-rose to-rose-fill px-2 py-0.5 text-[10px] font-black italic text-primary-foreground shadow-sm">
-                    2200星尘
+                    {inviteEntry.data.total_cap_credits
+                      ? `${inviteEntry.data.total_cap_credits} ${CREDITS_NAME}`
+                      : CREDITS_NAME}
                   </span>
                 )}
               </span>
               <span className="mt-0.5 block truncate text-[11px] text-muted-foreground">
-                分享专属链接，邀请好友得2200星尘
+                {inviteEntry.data.total_cap_credits
+                  ? `Bagikan tautan khusus, undang teman dapat ${inviteEntry.data.total_cap_credits} ${CREDITS_NAME}`
+                  : `Bagikan tautan khusus, kamu dan teman bisa dapat ${CREDITS_NAME}`}
               </span>
             </span>
             <span className="flex shrink-0 items-center gap-1 text-[12px] font-bold text-primary">
-              去邀请
+              Undang
               <ChevronRight className="h-4 w-4" aria-hidden />
             </span>
           </Link>
@@ -451,28 +456,28 @@ export default function ProfilePage() {
         <ProfileRow
           href="/profile/support"
           Icon={Headphones}
-          title="联系客服"
-          subtitle="有问题随时找我们"
+          title="Bantuan"
+          subtitle="Ada masalah? Hubungi kami kapan saja"
           showDot={supportUnread.data?.has_unread === true}
         />
         <ProfileRow
           href="/profile/messages"
           Icon={Bell}
-          title="消息中心"
-          subtitle="官方公告与系统消息"
+          title="Pesan"
+          subtitle="Pengumuman resmi dan pesan sistem"
           showDot={(unread.data?.total ?? 0) > 0}
         />
         {communityEntry.data?.enabled ? (
           <ProfileRow
             onClick={() => setCommunityOpen(true)}
             Icon={Send}
-            title="官方社群"
-            subtitle="加入秘境官方社群，与大家一起交流。"
+            title="Komunitas resmi"
+            subtitle="Gabung komunitas resmi PribadiAI, ngobrol bareng yang lain."
             // iconClassName="bg-sky-500/15 text-sky-400"
             trailing={
               <span className="flex items-center gap-1 text-xs font-bold text-amber-400 text-primary">
                 <Sparkles className="h-3.5 w-3.5 text-primary" aria-hidden />
-                {communityEntry.data.reward_credits} 星尘
+                {communityEntry.data.reward_credits} {CREDITS_NAME}
                 <ChevronRight className="h-4 w-4 text-muted-foreground" aria-hidden />
               </span>
             }
@@ -481,8 +486,8 @@ export default function ProfilePage() {
         <ProfileRow
           href="/profile/spending"
           Icon={ReceiptText}
-          title="消费明细"
-          subtitle="星尘消费支出记录"
+          title="Riwayat pemakaian"
+          subtitle={`Catatan pemakaian ${CREDITS_NAME}`}
         />
       </section>
       {communityEntry.data ? (
@@ -533,7 +538,7 @@ function ProfileRow({
         {showDot ? (
           <span
             role="status"
-            aria-label="有未读消息"
+            aria-label="Ada pesan belum dibaca"
             className="h-2 w-2 rounded-full bg-destructive"
           />
         ) : null}
@@ -557,12 +562,12 @@ function ProfileRow({
 function readFileAsBase64(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
-    reader.onerror = () => reject(new Error('读取头像文件失败'));
+    reader.onerror = () => reject(new Error('Gagal membaca file avatar'));
     reader.onload = () => {
       const result = typeof reader.result === 'string' ? reader.result : '';
       const separator = result.indexOf(',');
       if (separator < 0) {
-        reject(new Error('读取头像文件失败'));
+        reject(new Error('Gagal membaca file avatar'));
         return;
       }
       resolve(result.slice(separator + 1));

@@ -8,6 +8,7 @@
  */
 
 import {
+  CREDITS_NAME,
   MAX_SPOKEN_VOICE_CHARS,
   type VoiceBillingConfig,
   type VoiceHintsConfig,
@@ -28,10 +29,11 @@ export const DEFAULT_VOICE_BILLING_CONFIG = {
   enabled: false,
   creditsPerGeneration: 15,
   maxSpokenChars: MAX_SPOKEN_VOICE_CHARS,
-  priceLabel: '15 星尘',
-  overLimitHint: '文字处理后的语音文本超过 300 字，请删减或缩改后再生成',
-  draftFailedHint: '本次未生成，请稍后重试',
-  ttsFailedHint: '语音生成失败，请重试',
+  priceLabel: `15 ${CREDITS_NAME}`,
+  overLimitHint:
+    'Teks suara setelah diproses lebih dari 300 karakter. Hapus atau persingkat dulu, lalu generate lagi.',
+  draftFailedHint: 'Belum ke-generate. Coba lagi nanti.',
+  ttsFailedHint: 'Gagal generate suara. Coba lagi.',
 } as const;
 
 export interface VoiceBillingRuntimeConfig {

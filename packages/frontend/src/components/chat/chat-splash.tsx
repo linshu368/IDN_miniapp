@@ -199,7 +199,7 @@ export function ChatSplash({
           type="button"
           onClick={returnToLobby}
           disabled={returning}
-          aria-label="取消进入并返回大厅"
+          aria-label="Batalkan dan kembali ke lobby"
           className="absolute right-4 z-20 flex size-10 items-center justify-center rounded-full border border-border bg-card text-xl font-light text-muted-foreground transition hover:border-primary/30 hover:bg-secondary active:scale-95 disabled:opacity-50"
           style={{ top: 'calc(env(safe-area-inset-top) + 1rem)' }}
         >
@@ -227,7 +227,7 @@ export function ChatSplash({
       </div>
 
       <div className="absolute left-5 top-[calc(env(safe-area-inset-top)+1.35rem)] text-left">
-        <p className="text-[10px] font-semibold tracking-[0.28em] text-primary">蜜镜 AI</p>
+        <p className="text-[10px] font-semibold tracking-[0.28em] text-primary">PribadiAI</p>
         <p className="mt-1 text-[9px] tracking-[0.2em] text-muted-foreground/70">
           CHARACTER SESSION
         </p>
@@ -239,9 +239,12 @@ export function ChatSplash({
             className="mb-4 w-full border-l-2 border-primary bg-card px-4 py-3 text-left"
             style={{ animation: 'splash-fade-up 0.45s ease-out both' }}
           >
-            <p className="text-[12px] font-medium text-foreground/80">第一次见面，需要多等几秒</p>
+            <p className="text-[12px] font-medium text-foreground/80">
+              Pertemuan pertama, tunggu beberapa detik
+            </p>
             <p className="mt-1.5 text-[11px] leading-relaxed text-muted-foreground">
-              我们正在唤醒角色记忆和对话引擎。准备好后会自动进入，不用退出重试。
+              Kami sedang menyiapkan memori karakter dan mesin chat. Nanti masuk sendiri, tidak
+              perlu keluar dan coba lagi.
             </p>
           </div>
         )}
@@ -252,8 +255,10 @@ export function ChatSplash({
           }`}
         >
           <div className="mb-2 flex items-center justify-between text-[9px] tracking-[0.2em] text-muted-foreground">
-            <span>正在连接对话</span>
-            <span>{ready ? '100%' : progress >= 90 ? '正在完成' : `${Math.floor(progress)}%`}</span>
+            <span>Menghubungkan chat</span>
+            <span>
+              {ready ? '100%' : progress >= 90 ? 'Hampir selesai' : `${Math.floor(progress)}%`}
+            </span>
           </div>
           <div className="h-px overflow-hidden bg-border">
             <div
@@ -270,7 +275,8 @@ export function ChatSplash({
               style={{ animation: 'splash-fade-up 0.4s ease-out both' }}
             >
               <p className="text-[12px] leading-relaxed text-muted-foreground">
-                {error ?? '连接时间比预期更久。可以继续等待，或返回大厅重新进入。'}
+                {error ??
+                  'Koneksi lebih lama dari biasanya. Kamu bisa tunggu, atau kembali ke lobby lalu masuk lagi.'}
               </p>
               <div className="mt-3 flex justify-center gap-2">
                 {error && onRetry && (
@@ -280,7 +286,7 @@ export function ChatSplash({
                     disabled={returning}
                     className="min-h-10 rounded-full bg-primary px-5 py-2 text-[12px] font-medium text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-55"
                   >
-                    重试
+                    Coba lagi
                   </button>
                 )}
                 <button
@@ -289,7 +295,7 @@ export function ChatSplash({
                   disabled={returning}
                   className="min-h-10 rounded-full border border-border px-5 py-2 text-[12px] font-medium text-muted-foreground transition-colors hover:bg-secondary disabled:opacity-55"
                 >
-                  {returning ? '正在返回…' : '返回大厅'}
+                  {returning ? 'Sedang kembali…' : 'Kembali ke lobby'}
                 </button>
               </div>
             </div>
@@ -385,7 +391,9 @@ export function ChatSplash({
             />
           ))}
         </div>
-        <p className="text-[9px] tracking-[0.28em] text-muted-foreground/70">正在进入 TA 的世界</p>
+        <p className="text-[9px] tracking-[0.28em] text-muted-foreground/70">
+          Sedang masuk ke dunianya
+        </p>
       </div>
     </div>
   );

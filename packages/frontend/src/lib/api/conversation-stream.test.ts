@@ -1,8 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import type {
-  ConversationStreamDoneEvent,
-  ConversationStreamEvent,
-  ConversationStreamStartEvent,
+import {
+  CREDITS_NAME,
+  type ConversationStreamDoneEvent,
+  type ConversationStreamEvent,
+  type ConversationStreamStartEvent,
 } from '@miniapp/shared';
 import { ConversationStreamError, streamConversationTurn } from './conversation-stream';
 
@@ -188,7 +189,7 @@ describe('streamConversationTurn — 流未开始的失败', () => {
       new Response(
         JSON.stringify({
           success: false,
-          error: { code: 'insufficient_balance', message: '星尘余额不足' },
+          error: { code: 'insufficient_balance', message: `${CREDITS_NAME} tidak cukup` },
         }),
         { status: 402 }
       )
@@ -202,7 +203,7 @@ describe('streamConversationTurn — 流未开始的失败', () => {
     }).catch((e: unknown) => e)) as ConversationStreamError;
 
     expect(error.code).toBe('insufficient_balance');
-    expect(error.message).toBe('星尘余额不足');
+    expect(error.message).toBe(`${CREDITS_NAME} tidak cukup`);
   });
 
   it('409 会话忙：错误码原样带出', async () => {

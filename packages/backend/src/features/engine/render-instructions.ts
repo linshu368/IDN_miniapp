@@ -14,7 +14,7 @@ import type { UserGenerationConfig } from '@miniapp/shared';
 import type { EnginePlatformInstructions, EngineWordCountTiers } from './types.js';
 
 /** pref_custom_instructions 为空时注入模板的占位文案，与 bot 一致 */
-export const EMPTY_CUSTOM_INSTRUCTIONS = '暂无';
+export const EMPTY_CUSTOM_INSTRUCTIONS = 'Tidak ada';
 
 /**
  * 把用户选择的字数档位 id 翻成注入 {{WORD_COUNT}} 的文案。
@@ -76,5 +76,5 @@ export function renderPlatformInstructions(
  * 格式逐字移植 bot 的 _buildEnhancedPrompt，改动会直接影响输出质量。
  */
 export function wrapUserInput(userInput: string, renderedInstructions: string): string {
-  return `##系统指令：以下为最高优先级指令。\n${renderedInstructions}\n##用户指令:${userInput}\n`;
+  return `##Instruksi sistem: berikut adalah instruksi prioritas tertinggi.\n${renderedInstructions}\n##Instruksi pengguna:${userInput}\n`;
 }

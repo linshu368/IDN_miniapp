@@ -7,6 +7,7 @@ import type { WalletSpendingRecord } from '@miniapp/shared';
 
 import { Button } from '@/components/ui/button';
 import { useWalletSpendingQuery } from '@/lib/api/payment';
+import { CREDITS_NAME } from '@/lib/locale';
 import { useTelegramBackButton } from '@/lib/telegram';
 
 export default function SpendingPage() {
@@ -31,13 +32,13 @@ export default function SpendingPage() {
           size="icon"
           onClick={goBack}
           className="rounded-full text-muted-foreground hover:bg-secondary hover:text-foreground"
-          aria-label="返回"
+          aria-label="Kembali"
         >
           <ChevronLeft className="h-5 w-5" aria-hidden />
         </Button>
         <div>
-          <h1 className="text-base font-bold tracking-wide">消费明细</h1>
-          <p className="text-[10px] text-muted-foreground">最近 100 条模型调用</p>
+          <h1 className="text-base font-bold tracking-wide">Riwayat pemakaian</h1>
+          <p className="text-[10px] text-muted-foreground">100 pemakaian model terbaru</p>
         </div>
       </header>
 
@@ -45,19 +46,21 @@ export default function SpendingPage() {
         {query.isLoading && items.length === 0 ? (
           <div className="flex items-center justify-center py-16 text-muted-foreground">
             <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden />
-            加载中
+            Memuat
           </div>
         ) : query.isError && items.length === 0 ? (
           <div className="flex flex-1 flex-col items-center justify-center gap-3 py-20 text-center">
             <RefreshCw className="h-8 w-8 text-muted-foreground/60" aria-hidden />
-            <p className="text-[13px] font-medium text-muted-foreground">消费明细暂时无法加载</p>
+            <p className="text-[13px] font-medium text-muted-foreground">
+              Riwayat pemakaian belum bisa dimuat
+            </p>
             <Button
               variant="outline"
               size="sm"
               onClick={() => void query.refetch()}
               className="rounded-full border-border bg-card text-muted-foreground hover:bg-secondary hover:text-foreground"
             >
-              重新加载
+              Muat ulang
             </Button>
           </div>
         ) : items.length === 0 ? (
@@ -76,7 +79,7 @@ function EmptyState() {
       <div className="mb-2 rounded-full bg-card p-4">
         <ReceiptText className="h-8 w-8 opacity-50" aria-hidden />
       </div>
-      <p className="text-[13px] font-medium tracking-wide">暂无星尘消耗记录</p>
+      <p className="text-[13px] font-medium tracking-wide">Belum ada pemakaian {CREDITS_NAME}</p>
     </div>
   );
 }
@@ -111,14 +114,14 @@ function SpendingRow({ item }: { item: WalletSpendingRecord }) {
       </div>
       <div className="shrink-0 text-right">
         {item.status === 'pending' ? (
-          <p className="text-[13px] font-bold text-warn">待结算</p>
+          <p className="text-[13px] font-bold text-warn">Menunggu</p>
         ) : (
           <>
             <p className="text-[15px] font-black tabular-nums text-primary">
               {item.charged_amount > 0 ? '-' : ''}
               {item.charged_amount.toFixed(1)}
             </p>
-            <p className="mt-0.5 text-[10px] text-muted-foreground">星尘</p>
+            <p className="mt-0.5 text-[10px] text-muted-foreground">{CREDITS_NAME}</p>
           </>
         )}
       </div>

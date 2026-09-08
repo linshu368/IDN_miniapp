@@ -11,10 +11,10 @@ import { useSupportUnreadQuery } from '@/lib/api/support';
 import { shouldHideBottomNavForMarketFlows } from '@/lib/market-features';
 
 const NAV_ITEMS = [
-  { href: '/', label: '大厅', Icon: Home },
-  { href: '/chats', label: '聊天', Icon: MessageCircle },
-  { href: '/create', label: '创作', Icon: Sparkles },
-  { href: '/profile', label: '我的', Icon: User },
+  { href: '/', label: 'Lobby', Icon: Home },
+  { href: '/chats', label: 'Chat', Icon: MessageCircle },
+  { href: '/create', label: 'Kreasi', Icon: Sparkles },
+  { href: '/profile', label: 'Saya', Icon: User },
 ] as const;
 
 // 深层页面（沉浸式输入页、消息与客服会话）隐藏底部导航。
@@ -70,7 +70,7 @@ export function BottomNav() {
       style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
     >
       <nav
-        aria-label="主导航"
+        aria-label="Navigasi utama"
         className="pointer-events-auto grid w-full max-w-[390px] grid-cols-4 gap-1 rounded-[1.65rem] border border-border bg-card/92 p-1.5 text-foreground shadow-[0_14px_38px_rgba(0,0,0,0.38)] backdrop-blur-2xl"
       >
         {NAV_ITEMS.map(({ href, label, Icon }) => {
@@ -116,7 +116,7 @@ export function BottomNav() {
                 {href === '/profile' && hasUnread ? (
                   <span
                     role="status"
-                    aria-label="有未读消息"
+                    aria-label="Ada pesan belum dibaca"
                     className="absolute right-1.5 top-0.5 h-2 w-2 rounded-full bg-destructive ring-2 ring-card"
                   />
                 ) : null}

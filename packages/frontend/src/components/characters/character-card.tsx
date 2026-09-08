@@ -56,15 +56,15 @@ export function CharacterCard({
         'transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-2xl hover:shadow-[0_18px_40px_hsl(var(--glow)/0.2)] hover:border-primary/30 active:scale-95',
         'disabled:opacity-60'
       )}
-      aria-label={`查看 ${character.name} 的详情`}
+      aria-label={`Lihat detail ${character.name}`}
     >
       {/* 图片区：3:4 + 渐变叠层 + 名字 / 标签 */}
       <div className="relative aspect-[3/4] w-full shrink-0 overflow-hidden">
         {character.is_featured && (
           <span
             className="absolute right-2 top-2 z-20 flex size-8 items-center justify-center rounded-full border border-primary/70 bg-black/55 shadow-[0_0_18px_hsl(var(--glow)/0.65)] backdrop-blur-sm"
-            title="热门角色"
-            aria-label="热门角色"
+            title="Karakter populer"
+            aria-label="Karakter populer"
           >
             <Flame className="size-[18px] fill-primary/80 text-primary" aria-hidden="true" />
           </span>

@@ -9,7 +9,7 @@
  */
 
 import type { FastifyReply } from 'fastify';
-import { fail, type ConversationErrorCode } from '@miniapp/shared';
+import { CREDITS_NAME, fail, type ConversationErrorCode } from '@miniapp/shared';
 import { ConversationRepositoryError } from '../../infrastructure/repositories/conversation-errors.js';
 
 const HTTP_STATUS: Record<ConversationErrorCode, number> = {
@@ -24,12 +24,12 @@ const HTTP_STATUS: Record<ConversationErrorCode, number> = {
 };
 
 const DEFAULT_MESSAGE: Record<ConversationErrorCode, string> = {
-  session_not_found: '会话不存在',
-  character_not_found: '角色卡不存在',
-  session_busy: '这个会话还有一条回复正在生成，请稍后再试',
-  insufficient_balance: '星尘余额不足',
-  regenerate_not_allowed: '只能重新生成最后一轮回复',
-  upstream_error: '生成服务暂时不可用，请稍后再试',
+  session_not_found: 'Percakapan tidak ditemukan',
+  character_not_found: 'Karakter tidak ditemukan',
+  session_busy: 'Masih ada balasan yang sedang dibuat. Coba lagi sebentar.',
+  insufficient_balance: `${CREDITS_NAME} tidak cukup`,
+  regenerate_not_allowed: 'Hanya balasan terakhir yang bisa dibuat ulang',
+  upstream_error: 'Layanan generate lagi gangguan. Coba lagi nanti.',
 };
 
 export function conversationErrorStatus(code: ConversationErrorCode): number {

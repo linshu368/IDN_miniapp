@@ -25,4 +25,5 @@ export * from './dev-fixtures';
 export * from './lobby-featured';
 export * from './telegram-avatar';
 export * from './user-placeholder';
+export * from './market-locale';
 export * from './telemetry/sanitize';

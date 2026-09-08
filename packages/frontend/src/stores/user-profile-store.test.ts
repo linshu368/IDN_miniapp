@@ -4,7 +4,7 @@ const telegramPhotoUrl = vi.hoisted(() => ({ value: undefined as string | undefi
 const defaultAvatar = vi.hoisted(() => ({ url: 'https://default.example/avatar.png' }));
 
 vi.mock('@/lib/telegram/user', () => ({
-  getTelegramDefaultDisplayName: () => '你',
+  getTelegramDefaultDisplayName: () => 'kamu',
   getTelegramPhotoUrl: () => telegramPhotoUrl.value,
 }));
 

@@ -111,8 +111,8 @@ export function SessionRenameField({
           if (event.key === 'Escape') actions.cancelRename();
         }}
         maxLength={60}
-        placeholder="留空则恢复为角色名"
-        aria-label="对话名称"
+        placeholder="Kosongkan untuk kembali ke nama karakter"
+        aria-label="Nama percakapan"
         autoFocus
         className={cn(
           'min-w-0 flex-1 border border-border bg-background text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring',
@@ -121,10 +121,10 @@ export function SessionRenameField({
             : 'rounded-xl px-3 py-2 text-sm'
         )}
       />
-      <SessionActionButton label="保存" onClick={actions.commitRename} density={density}>
+      <SessionActionButton label="Simpan" onClick={actions.commitRename} density={density}>
         <Check aria-hidden />
       </SessionActionButton>
-      <SessionActionButton label="取消" onClick={actions.cancelRename} density={density}>
+      <SessionActionButton label="Batal" onClick={actions.cancelRename} density={density}>
         <X aria-hidden />
       </SessionActionButton>
     </div>
@@ -152,7 +152,7 @@ export function SessionDeleteConfirm({
       )}
     >
       <span className={cn('text-muted-foreground', compact ? 'text-[11px]' : 'text-xs')}>
-        删除这段对话？
+        Hapus percakapan ini?
       </span>
       <span className="flex items-center gap-2">
         <button
@@ -163,7 +163,7 @@ export function SessionDeleteConfirm({
             compact ? 'px-2.5 py-1 text-[11px]' : 'px-3 py-1.5 text-xs'
           )}
         >
-          取消
+          Batal
         </button>
         <button
           type="button"
@@ -173,7 +173,7 @@ export function SessionDeleteConfirm({
             compact ? 'px-2.5 py-1 text-[11px]' : 'px-3 py-1.5 text-xs'
           )}
         >
-          删除
+          Hapus
         </button>
       </span>
     </div>

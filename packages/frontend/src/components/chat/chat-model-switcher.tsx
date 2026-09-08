@@ -51,7 +51,7 @@ export function ChatModelSwitcher({
     try {
       await selectModel.mutateAsync({ model_id: modelId });
       if (latestSelectRef.current !== modelId) return;
-      setFeedback('模型已切换');
+      setFeedback('Model diganti');
       if (onSwitched) window.setTimeout(onSwitched, 250);
     } catch (err) {
       if (latestSelectRef.current !== modelId) return;
@@ -60,7 +60,7 @@ export function ChatModelSwitcher({
         handleInsufficientCredits();
         return;
       }
-      setError(err instanceof Error ? err.message : '该模型暂不可用');
+      setError(err instanceof Error ? err.message : 'Model ini belum tersedia');
     }
   };
 
@@ -75,7 +75,11 @@ export function ChatModelSwitcher({
   }
 
   if (!data || data.catalog.tiers.length === 0) {
-    return <p className="py-8 text-center text-[13px] text-muted-foreground">暂时没有可用模型</p>;
+    return (
+      <p className="py-8 text-center text-[13px] text-muted-foreground">
+        Belum ada model yang tersedia
+      </p>
+    );
   }
 
   return (
@@ -88,14 +92,14 @@ export function ChatModelSwitcher({
           />
           <div className="min-w-0 flex-1">
             <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
-              当前引擎
+              Model aktif
             </p>
             <p className="truncate text-[15px] font-semibold text-foreground">
-              {selectedModel?.display_name ?? '等待选择'}
+              {selectedModel?.display_name ?? 'Menunggu pilihan'}
             </p>
           </div>
           {isFetching ? (
-            <span className="shrink-0 text-[10px] text-muted-foreground">同步中</span>
+            <span className="shrink-0 text-[10px] text-muted-foreground">Menyinkronkan</span>
           ) : null}
         </div>
       </div>
@@ -204,7 +208,7 @@ function TierSection({
                     </span>
                     {model.is_free ? (
                       <span className="shrink-0 rounded-full border border-success/25 bg-success/10 px-2 py-0.5 text-[10px] font-bold text-success">
-                        限量免费
+                        Gratis terbatas
                       </span>
                     ) : null}
                   </span>

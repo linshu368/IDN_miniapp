@@ -26,10 +26,12 @@ import { requireTelegramAuth } from '../middleware/auth.js';
 import { getOrCreateDbUser } from '../lib/user.js';
 import { getDomainDb } from '../lib/supabase.js';
 import { fetchRuntimeConfigEntry } from '../platform/runtime-config.js';
+import { parseInviteRewardHighlight } from '../lib/invite-config.js';
 import { buildMiniappDeepLink } from '../lib/telegram-links.js';
 
 const ENTRY_ENABLED_CONFIG_KEY = 'miniapp_invite_entry_enabled';
 const CENTER_CONFIG_KEY = 'miniapp_invite_center_config';
+const REWARD_RULES_CONFIG_KEY = 'miniapp_invite_reward_rules';
 
 /** 与 105 迁移中 invite_codes.code 的 CHECK 一致；大小写在 RPC 内归一。 */
 const INVITE_CODE_RE = /^[A-Za-z0-9]{8}$/;
@@ -65,8 +67,9 @@ export default async function inviteRoutes(app: FastifyInstance) {
       }
 
       const dbUser = await getOrCreateDbUser(request.user);
-      const [entryEnabled, codeRow] = await Promise.all([
+      const [entryEnabled, highlight, codeRow] = await Promise.all([
         readEntryEnabled(),
+        readRewardHighlight(),
         getDomainDb('miniapp_traffic')
           .from('invite_codes')
           .select('center_first_entered_at')
@@ -76,13 +79,15 @@ export default async function inviteRoutes(app: FastifyInstance) {
 
       if (codeRow.error) {
         request.log.error({ err: codeRow.error }, '[Invite] 查询邀请码记录失败');
-        return reply.status(500).send(fail('INTERNAL', '查询邀请入口状态失败'));
+        return reply.status(500).send(fail('INTERNAL', 'Gagal memuat undangan'));
       }
 
       return reply.send(
         ok<InviteEntryStatusData>({
           entry_enabled: entryEnabled,
           center_entered: Boolean(codeRow.data?.center_first_entered_at),
+          total_cap_credits: highlight.totalCapCredits,
+          chat_rounds_threshold: highlight.chatRoundsThreshold,
         })
       );
     }
@@ -103,12 +108,12 @@ export default async function inviteRoutes(app: FastifyInstance) {
       });
       if (error) {
         request.log.error({ err: error }, '[Invite] ensure_invite_code 失败');
-        return reply.status(500).send(fail('INTERNAL', '获取邀请码失败'));
+        return reply.status(500).send(fail('INTERNAL', 'Gagal memuat kode undangan'));
       }
 
       const row = (data as Array<{ code: string; first_visit: boolean }> | null)?.[0];
       if (!row) {
-        return reply.status(500).send(fail('INTERNAL', '获取邀请码失败'));
+        return reply.status(500).send(fail('INTERNAL', 'Gagal memuat kode undangan'));
       }
 
       const [centerConfig, inviteLink] = await Promise.all([
@@ -151,7 +156,7 @@ export default async function inviteRoutes(app: FastifyInstance) {
     });
     if (error) {
       request.log.error({ err: error }, '[Invite] bind_invite 失败');
-      return reply.status(500).send(fail('INTERNAL', '绑定邀请关系失败'));
+      return reply.status(500).send(fail('INTERNAL', 'Gagal mengikat undangan'));
     }
 
     const row = (data as Array<{ status: InviteBindStatus }> | null)?.[0];
@@ -198,7 +203,7 @@ export default async function inviteRoutes(app: FastifyInstance) {
         { err: relationCount.error ?? rewardRows.error },
         '[Invite] 查询邀请数据失败'
       );
-      return reply.status(500).send(fail('INTERNAL', '查询邀请数据失败'));
+      return reply.status(500).send(fail('INTERNAL', 'Gagal memuat data undangan'));
     }
 
     const rewards = (rewardRows.data ?? []) as InviteRewardRecord[];
@@ -217,6 +222,11 @@ export default async function inviteRoutes(app: FastifyInstance) {
 async function readEntryEnabled(): Promise<boolean> {
   const entry = await fetchRuntimeConfigEntry(ENTRY_ENABLED_CONFIG_KEY);
   return entry?.value === true;
+}
+
+async function readRewardHighlight() {
+  const entry = await fetchRuntimeConfigEntry(REWARD_RULES_CONFIG_KEY);
+  return parseInviteRewardHighlight(entry?.value ?? null);
 }
 
 async function readCenterConfig(): Promise<{ posterUrl: string; copyTemplates: string[] }> {
