@@ -85,7 +85,7 @@ export function ChatGenerationSettings() {
                       : 'border-border bg-card text-muted-foreground hover:bg-secondary'
                   )}
                 >
-                  {option.ui_label}
+                  {option.prompt_value}
                 </button>
               );
             })}

@@ -231,7 +231,7 @@ describe('buildSnapshot：字数档位的契约校验与降级', () => {
       '300-500'
     );
     expect(toPublicWordCountTiersFromEngine(snapshot.instructions.wordCountTiers).tiers).toEqual([
-      { id: '300-500', ui_label: '标准300-500', sort_order: 0 },
+      { id: '300-500', ui_label: '标准300-500', prompt_value: '300-500', sort_order: 0 },
     ]);
   });
 });

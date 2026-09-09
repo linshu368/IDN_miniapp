@@ -81,6 +81,7 @@ export const PublicWordCountTiersSchema = z.object({
     z.object({
       id: WordCountTierIdSchema,
       ui_label: z.string().trim().min(1).max(20),
+      prompt_value: z.string().trim().min(1).max(80),
       sort_order: z.number().int().nonnegative(),
     })
   ),
@@ -138,6 +139,7 @@ export function toPublicWordCountTiers(config: WordCountTiersConfig): PublicWord
     .map((tier) => ({
       id: tier.id,
       ui_label: tier.ui_label,
+      prompt_value: tier.prompt_value,
       sort_order: tier.sort_order,
     }));
 
