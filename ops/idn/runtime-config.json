@@ -41,7 +41,7 @@
             "tier": "light",
             "label": "Ringan",
             "color": "#4ade80",
-            "cost_hint": "Model ringan, gratis terbatas. Setiap kartu karakter mendapat 30 putaran percakapan gratis pertama. Setelah 30 putaran, setiap putaran berikutnya akan menghabiskan 15 Debu Bintang.",
+            "cost_hint": "Model ringan, setiap putaran percakapan akan menghabiskan 15 Debu Bintang secara tetap.",
             "sort_order": 0,
             "models": [
               {
@@ -49,7 +49,7 @@
                 "openrouter_model_id": "z-ai/glm-5.3-flash",
                 "display_name": "GLM 5.3 Flash",
                 "tagline": "Rekomendasi, model GLM terbaru",
-                "is_free": true,
+                "is_free": false,
                 "enabled": true,
                 "sort_order": 0
               },
@@ -58,7 +58,7 @@
                 "openrouter_model_id": "google/gemini-3.1-flash-lite",
                 "display_name": "Gemini 3.1 Flash",
                 "tagline": "Model NSFW klasik",
-                "is_free": true,
+                "is_free": false,
                 "enabled": true,
                 "sort_order": 1
               },
@@ -76,7 +76,7 @@
                 "openrouter_model_id": "deepseek/deepseek-v4-flash",
                 "display_name": "DeepSeek V4 Flash",
                 "tagline": "Natural dan kaya alur",
-                "is_free": true,
+                "is_free": false,
                 "enabled": true,
                 "sort_order": 3
               },
@@ -85,7 +85,7 @@
                 "openrouter_model_id": "deepseek/deepseek-v4-flash-0731",
                 "display_name": "DeepSeek V4 Flash 0731",
                 "tagline": "V4 terbaru",
-                "is_free": true,
+                "is_free": false,
                 "enabled": true,
                 "sort_order": 4
               },
@@ -99,101 +99,11 @@
                 "sort_order": 5
               }
             ]
-          },
-          {
-            "tier": "standard",
-            "label": "Standar",
-            "color": "#818cf8",
-            "cost_hint": "Model standar, setiap putaran percakapan akan menghabiskan 30 Debu Bintang secara tetap.",
-            "sort_order": 1,
-            "models": [
-              {
-                "id": "model-1786709432286-3",
-                "openrouter_model_id": "google/gemini-3.7-flash",
-                "display_name": "Gemini 3.7 Flash",
-                "tagline": "Gemini terbaru",
-                "is_free": false,
-                "enabled": false,
-                "sort_order": 0
-              },
-              {
-                "id": "model-1784860990825-4",
-                "openrouter_model_id": "google/gemini-3.6-flash",
-                "display_name": "Gemini 3.6 Flash",
-                "tagline": "Lebih cerdas dan lancar",
-                "is_free": false,
-                "enabled": false,
-                "sort_order": 1
-              },
-              {
-                "id": "model-1784544217859-3",
-                "openrouter_model_id": "deepseek/deepseek-v4-pro",
-                "display_name": "DeepSeek V4 Pro",
-                "tagline": "Stabil dan hemat",
-                "is_free": false,
-                "enabled": true,
-                "sort_order": 2
-              },
-              {
-                "id": "model-1787023807191-3",
-                "openrouter_model_id": "moonshotai/kimi-k2.5",
-                "display_name": "Kimi K2.5",
-                "tagline": "Lebih cerdas dan lancar",
-                "is_free": false,
-                "enabled": true,
-                "sort_order": 3
-              },
-              {
-                "id": "model-1787653946730-4",
-                "openrouter_model_id": "z-ai/glm-4.7",
-                "display_name": "GLM 4.7",
-                "tagline": "GLM klasik",
-                "is_free": false,
-                "enabled": true,
-                "sort_order": 4
-              }
-            ]
-          },
-          {
-            "tier": "premium",
-            "label": "Unggulan",
-            "color": "#c084fc",
-            "cost_hint": "Model unggulan, setiap putaran percakapan akan menghabiskan 50 Debu Bintang secara tetap.",
-            "sort_order": 2,
-            "models": [
-              {
-                "id": "model-1787653808460-5",
-                "openrouter_model_id": "z-ai/glm-5",
-                "display_name": "GLM 5 fast",
-                "tagline": "Kuat di skenario khusus",
-                "is_free": false,
-                "enabled": true,
-                "sort_order": 0
-              },
-              {
-                "id": "model-1786704243231-3",
-                "openrouter_model_id": "z-ai/glm-5.2",
-                "display_name": "GLM 5.2 fast",
-                "tagline": "Narasi dan penalaran kuat",
-                "is_free": false,
-                "enabled": true,
-                "sort_order": 1
-              },
-              {
-                "id": "model-1786936655854-3",
-                "openrouter_model_id": "nvidia/nemotron-3-ultra-550b-a55b",
-                "display_name": "Nemo 3",
-                "tagline": "Sangat realistis",
-                "is_free": false,
-                "enabled": true,
-                "sort_order": 2
-              }
-            ]
           }
         ]
       },
       "text_value": null,
-      "description": "印尼试水：模型目录与中文现网对齐（id / OpenRouter 映射 / 免费标记）；展示文案为印尼语。默认 DeepSeek V4 Flash。"
+      "description": "印尼试水：仅保留轻量档 6 个付费模型，每轮固定 15 Debu Bintang；展示文案为印尼语。默认 DeepSeek V4 Flash。"
     },
     {
       "key": "pref_word_count_tiers",
