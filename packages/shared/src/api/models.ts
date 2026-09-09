@@ -69,7 +69,7 @@ export const ModelCatalogTierSchema = z.object({
   tier: ModelCatalogTierKeySchema,
   label: z.string().trim().min(1).max(20),
   color: HexColorSchema,
-  cost_hint: z.string().trim().min(1).max(50),
+  cost_hint: z.string().trim().min(1).max(200),
   sort_order: z.number().int().nonnegative(),
   models: z.array(z.preprocess(normalizeCatalogModelInput, ModelCatalogModelSchema)).min(1),
 });

@@ -41,7 +41,7 @@
             "tier": "light",
             "label": "Ringan",
             "color": "#4ade80",
-            "cost_hint": "Cepat untuk percakapan harian",
+            "cost_hint": "Model ringan, gratis terbatas. Setiap kartu karakter mendapat 30 putaran percakapan gratis pertama. Setelah 30 putaran, setiap putaran berikutnya akan menghabiskan 15 Debu Bintang.",
             "sort_order": 0,
             "models": [
               {
@@ -104,7 +104,7 @@
             "tier": "standard",
             "label": "Standar",
             "color": "#818cf8",
-            "cost_hint": "Seimbang kualitas dan biaya",
+            "cost_hint": "Model standar, setiap putaran percakapan akan menghabiskan 30 Debu Bintang secara tetap.",
             "sort_order": 1,
             "models": [
               {
@@ -158,7 +158,7 @@
             "tier": "premium",
             "label": "Unggulan",
             "color": "#c084fc",
-            "cost_hint": "Alur kompleks dan teks panjang",
+            "cost_hint": "Model unggulan, setiap putaran percakapan akan menghabiskan 50 Debu Bintang secara tetap.",
             "sort_order": 2,
             "models": [
               {

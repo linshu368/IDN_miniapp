@@ -108,6 +108,16 @@ describe('ModelCatalogSchema', () => {
     expect(ModelCatalogSchema.safeParse(invalidCatalog).success).toBe(false);
   });
 
+  it('accepts cost hints up to 200 characters and rejects longer ones', () => {
+    const atLimit = structuredClone(validCatalog);
+    atLimit.tiers[0]!.cost_hint = 'x'.repeat(200);
+    expect(ModelCatalogSchema.safeParse(atLimit).success).toBe(true);
+
+    const tooLong = structuredClone(validCatalog);
+    tooLong.tiers[0]!.cost_hint = 'x'.repeat(201);
+    expect(ModelCatalogSchema.safeParse(tooLong).success).toBe(false);
+  });
+
   it('rejects duplicate OpenRouter model mappings', () => {
     const duplicateMapping = structuredClone(validCatalog);
     duplicateMapping.tiers[0]!.models.push({

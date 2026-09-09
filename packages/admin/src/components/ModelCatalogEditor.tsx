@@ -546,7 +546,7 @@ export function ModelCatalogEditor(props: {
                           <Typography.Text>参考消耗文案</Typography.Text>
                           <Input
                             value={tier.cost_hint}
-                            maxLength={50}
+                            maxLength={200}
                             showCount
                             disabled={props.disabled}
                             onChange={(event) =>

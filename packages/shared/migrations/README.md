@@ -141,6 +141,7 @@ Workflow 会在执行前校验连接串中的 project ref。`test` 只能连接 
 057_free_quota_exhausted_dialog_config.sql # 免费额度耗尽弹窗文案运行时配置与运营后台管理
 058_fixed_tier_llm_billing.sql # 固定每轮扣费：免费额度后 10、标准档 30、旗舰档 50
 059_model_catalog_cost_hint_limit.sql # 模型目录档位参考消耗文案上限 30 → 50
+110_model_catalog_cost_hint_limit.sql # 模型目录档位参考消耗文案上限 50 → 200
 060_lobby_recommended_latest_sorting.sql # 首页推荐/最新排序：聊天转化率聚合视图与角色最后上架时间
 061_character_free_chat_quota_limit_config.sql # 角色卡免费轮次上限改为 runtime_config（默认 40）并可运营后台调整
 062_simulation_card_evaluation.sql # 测试卡标识、SHA-256 去重与独立模拟会话/聊天日志 schema
