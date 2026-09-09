@@ -37,10 +37,25 @@ const PANEL_DESCRIPTIONS: Record<Exclude<ToolsPanel, null>, string> = {
   voice: 'Pilih suara karakter',
 };
 
-const TABS: { key: ToolsTab; label: string; icon: ComponentType<{ className?: string }> }[] = [
-  { key: 'chat', label: 'Pengaturan chat', icon: MessagesSquare },
-  { key: 'voice', label: 'Pengaturan suara', icon: Mic },
-  { key: 'image', label: 'Pengaturan gambar', icon: ImageIcon },
+const TABS: {
+  key: ToolsTab;
+  label: string;
+  labelLines: readonly [string, string];
+  icon: ComponentType<{ className?: string }>;
+}[] = [
+  {
+    key: 'chat',
+    label: 'Pengaturan chat',
+    labelLines: ['Pengaturan', 'chat'],
+    icon: MessagesSquare,
+  },
+  { key: 'voice', label: 'Pengaturan suara', labelLines: ['Pengaturan', 'suara'], icon: Mic },
+  {
+    key: 'image',
+    label: 'Pengaturan gambar',
+    labelLines: ['Pengaturan', 'gambar'],
+    icon: ImageIcon,
+  },
 ];
 
 interface ChatToolsSheetProps {
@@ -103,6 +118,7 @@ export function ChatToolsSheet({ returnTo, onCreateConversation, creating }: Cha
                     key={item.key}
                     type="button"
                     onClick={() => setTab(item.key)}
+                    aria-label={item.label}
                     className={cn(
                       'flex flex-1 items-center justify-center gap-1.5 rounded-full py-2 text-[13px] font-medium transition-colors',
                       tab === item.key
@@ -111,7 +127,10 @@ export function ChatToolsSheet({ returnTo, onCreateConversation, creating }: Cha
                     )}
                   >
                     <item.icon className="size-3.5" aria-hidden />
-                    {item.label}
+                    <span className="leading-tight">
+                      <span className="block">{item.labelLines[0]}</span>
+                      <span className="block">{item.labelLines[1]}</span>
+                    </span>
                   </button>
                 ))}
               </div>
