@@ -35,7 +35,7 @@
     {
       "key": "llm_model_catalog",
       "value": {
-        "default_model_id": "model-1784859673731-4",
+        "default_model_id": "model-1787309754155-3",
         "tiers": [
           {
             "tier": "light",
@@ -103,7 +103,7 @@
         ]
       },
       "text_value": null,
-      "description": "印尼试水：仅保留轻量档 6 个付费模型，每轮固定 15 Debu Bintang；展示文案为印尼语。默认 DeepSeek V4 Flash。"
+      "description": "印尼试水：仅保留轻量档 6 个付费模型，每轮固定 15 Debu Bintang；展示文案为印尼语。默认 Gemini 3.1 Flash。"
     },
     {
       "key": "pref_word_count_tiers",
