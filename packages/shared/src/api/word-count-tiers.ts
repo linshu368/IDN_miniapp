@@ -99,28 +99,28 @@ export const DEFAULT_WORD_COUNT_TIERS_CONFIG: WordCountTiersConfig = {
   tiers: [
     {
       id: '100-300',
-      ui_label: 'Pendek',
+      ui_label: '50-150 kata',
       prompt_value: '50-150 kata',
       enabled: true,
       sort_order: 0,
     },
     {
       id: '300-500',
-      ui_label: 'Sedang',
+      ui_label: '150-250 kata',
       prompt_value: '150-250 kata',
       enabled: true,
       sort_order: 1,
     },
     {
       id: '500-800',
-      ui_label: 'Panjang',
+      ui_label: '250-400 kata',
       prompt_value: '250-400 kata',
       enabled: true,
       sort_order: 2,
     },
     {
       id: '800+',
-      ui_label: 'Sangat panjang',
+      ui_label: '400+ kata',
       prompt_value: '400+ kata',
       enabled: true,
       sort_order: 3,
