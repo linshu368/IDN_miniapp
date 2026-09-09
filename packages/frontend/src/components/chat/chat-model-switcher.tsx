@@ -25,7 +25,7 @@ export function ChatModelSwitcher({
   /** 切换成功后通知外层收起工具箱，与原版一致 */
   onSwitched?: () => void;
 }) {
-  const { data, isLoading, isFetching } = useModelCatalogQuery();
+  const { data, error: loadError, isLoading, isFetching } = useModelCatalogQuery();
   const selectModel = useSelectModelMutation();
   const { handleInsufficientCredits, insufficientCreditsDialog } =
     useInsufficientCreditsNotice(returnTo);
@@ -77,7 +77,7 @@ export function ChatModelSwitcher({
   if (!data || data.catalog.tiers.length === 0) {
     return (
       <p className="py-8 text-center text-[13px] text-muted-foreground">
-        Belum ada model yang tersedia
+        {loadError ? 'Model belum bisa dimuat. Coba lagi nanti.' : 'Belum ada model yang tersedia'}
       </p>
     );
   }

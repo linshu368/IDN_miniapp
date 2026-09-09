@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { GetModelCatalogData } from '@miniapp/shared';
-import { applySelectedModelToCatalog } from './models';
+import { applySelectedModelToCatalog, isPublishedModelCatalogData } from './models';
 import { MODEL_CATALOG_STALE_TIME_MS, shouldRefreshModelCatalog } from './model-cache-policy';
 
 const catalog: GetModelCatalogData = {
@@ -43,6 +43,16 @@ describe('model catalog refresh policy', () => {
     expect(shouldRefreshModelCatalog(0, now)).toBe(true);
     expect(shouldRefreshModelCatalog(now - MODEL_CATALOG_STALE_TIME_MS, now)).toBe(false);
     expect(shouldRefreshModelCatalog(now - MODEL_CATALOG_STALE_TIME_MS - 1, now)).toBe(true);
+  });
+});
+
+describe('isPublishedModelCatalogData', () => {
+  it('rejects compatibility fallback catalogs', () => {
+    expect(isPublishedModelCatalogData({ ...catalog, catalog_version: 0 })).toBe(false);
+  });
+
+  it('accepts published runtime catalogs', () => {
+    expect(isPublishedModelCatalogData(catalog)).toBe(true);
   });
 });
 

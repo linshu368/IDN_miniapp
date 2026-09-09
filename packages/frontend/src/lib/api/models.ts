@@ -10,7 +10,7 @@ import type {
 } from '@miniapp/shared';
 import { MODEL_CATALOG_STALE_TIME_MS } from './model-cache-policy';
 
-const MODEL_CATALOG_CACHE_KEY = 'miniapp:model-catalog:last-good:v2';
+const MODEL_CATALOG_CACHE_KEY = 'miniapp:model-catalog:last-good:v3';
 
 export const modelCatalogKeys = {
   detail: ['modelCatalog'] as const,
@@ -33,6 +33,11 @@ export function useModelCatalogQuery() {
     queryFn: async () => {
       try {
         const data = await apiClient<GetModelCatalogData>('/api/v1/models/config');
+        if (!isPublishedModelCatalogData(data)) {
+          const cached = readLastGoodCatalog();
+          if (cached) return cached;
+          throw new Error('Model catalog config is not published');
+        }
         writeLastGoodCatalog(data);
         return data;
       } catch (error) {
@@ -44,6 +49,12 @@ export function useModelCatalogQuery() {
     staleTime: MODEL_CATALOG_STALE_TIME_MS,
     placeholderData: readLastGoodCatalog,
   });
+}
+
+export function isPublishedModelCatalogData(
+  data: GetModelCatalogData | undefined
+): data is GetModelCatalogData {
+  return !!data && data.catalog_version > 0 && data.catalog.tiers.length > 0;
 }
 
 /**
@@ -116,7 +127,9 @@ function readLastGoodCatalog(): GetModelCatalogData | undefined {
   if (typeof window === 'undefined') return undefined;
   try {
     const raw = window.localStorage.getItem(MODEL_CATALOG_CACHE_KEY);
-    return raw ? (JSON.parse(raw) as GetModelCatalogData) : undefined;
+    if (!raw) return undefined;
+    const parsed = JSON.parse(raw) as GetModelCatalogData;
+    return isPublishedModelCatalogData(parsed) ? parsed : undefined;
   } catch {
     return undefined;
   }
