@@ -9,7 +9,6 @@
 
 import { FastifyInstance } from 'fastify';
 import {
-  LOBBY_FEATURED_POSITION_COUNT,
   fail,
   ok,
   type CharacterSummary,
@@ -22,9 +21,7 @@ import { getOrCreateDbUser } from '../lib/user.js';
 import { prisma } from '../lib/db.js';
 import { requestLogger } from '../lib/logger.js';
 import { resolveCharacterAvatarUrl } from './characters.js';
-import { loadCharacterRankingScores } from '../features/lobby/ranking-stats.js';
-import { resolveLobbyPinnedCharacters } from '../features/lobby/pinned-characters.js';
-import { resolveLobbyFeaturedIds } from '../features/lobby/featured.js';
+import { isLobbyFeatured } from '../features/lobby/featured.js';
 import { MiniappCharacterFavoriteRepository } from '../infrastructure/repositories/MiniappCharacterFavoriteRepository.js';
 
 const CHARACTER_ID_REGEX =
@@ -62,33 +59,25 @@ export default async function favoriteRoutes(app: FastifyInstance) {
         return reply.send(ok<GetCharacterFavoritesData>({ characters: [] }));
       }
 
-      // 大厅排序决定 is_featured，收藏列表必须沿用同一套判定，
-      // 否则同一张卡在两个页面的热门标记会不一致。原来这里按 sort_order 前八算，
-      // 而大厅早在 v3 就换成了「运营固定位 + 排序分主池前八」，两边一直是错开的。
-      const [lobbyOrder, snapshot, pinned] = await Promise.all([
-        prisma.character.findMany({
-          where: { enabled: true, archived_at: null },
-          orderBy: [{ sort_order: 'asc' }, { created_at: 'desc' }],
-          select: {
-            id: true,
-            name: true,
-            description: true,
-            avatar_url: true,
-            tags: true,
-            creator: true,
-          },
-        }),
-        loadCharacterRankingScores(),
-        resolveLobbyPinnedCharacters(request.log),
-      ]);
-
-      const featuredIds = resolveLobbyFeaturedIds({
-        operatorOrdered: lobbyOrder,
-        snapshot,
-        pinnedIds: pinned.characterIds,
+      // 金框跟大厅同源：sort_order 0–7。收藏列表不再拉全量大厅，只取收藏卡本身。
+      const favoriteCharacters = await prisma.character.findMany({
+        where: {
+          id: { in: favoriteRows.map((row) => row.character_id) },
+          enabled: true,
+          archived_at: null,
+        },
+        select: {
+          id: true,
+          name: true,
+          description: true,
+          avatar_url: true,
+          tags: true,
+          creator: true,
+          sort_order: true,
+        },
       });
 
-      const byId = new Map(lobbyOrder.map((character) => [character.id, character]));
+      const byId = new Map(favoriteCharacters.map((character) => [character.id, character]));
 
       // 保留 RPC 的收藏时间倒序；RPC 已过滤下架卡，这里的 flatMap 只兜底极窄的竞态窗口。
       const characters: CharacterSummary[] = favoriteRows.flatMap((favorite) => {
@@ -102,7 +91,7 @@ export default async function favoriteRoutes(app: FastifyInstance) {
             avatar_url: resolveCharacterAvatarUrl(character.id, character.avatar_url),
             personality_tags: Array.isArray(character.tags) ? (character.tags as string[]) : [],
             author_name: character.creator,
-            is_featured: featuredIds.has(character.id),
+            is_featured: isLobbyFeatured(character.sort_order),
           },
         ];
       });

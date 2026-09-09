@@ -1,7 +1,7 @@
 import { FastifyInstance } from 'fastify';
 import { prisma } from '../lib/db.js';
 import { config } from '../platform/config.js';
-import { LOBBY_FEATURED_POSITION_COUNT, ok, fail, parseLobbySort } from '@miniapp/shared';
+import { ok, fail, parseLobbySort } from '@miniapp/shared';
 import type {
   GetCharactersData,
   GetCharacterByIdData,
@@ -9,10 +9,7 @@ import type {
   CharacterDetail,
   LobbyLatestBadgeData,
 } from '@miniapp/shared';
-import { loadCharacterRankingScores } from '../features/lobby/ranking-stats.js';
-import { applyPinnedOnly, buildRecommendedOrder } from '../features/lobby/recommended-ranking.js';
-import { resolveLobbyFeaturedIds } from '../features/lobby/featured.js';
-import { resolveLobbyPinnedCharacters } from '../features/lobby/pinned-characters.js';
+import { isLobbyFeatured } from '../features/lobby/featured.js';
 import { hasNewLobbyCharacters } from '../lib/lobby-latest-badge.js';
 import { MiniappUserSettingsRepository } from '../infrastructure/repositories/MiniappUserSettingsRepository.js';
 import { getOrCreateDbUser } from '../lib/user.js';
@@ -50,7 +47,7 @@ export default async function characterRoutes(app: FastifyInstance) {
 
     const characters = await prisma.character.findMany({
       where: { enabled: true, archived_at: null },
-      // 「最新」只看最后上架时间；「推荐」先取运营顺序，再在内存里做动态排序。
+      // 「最新」只看最后上架时间；「推荐」只按运营 sort_order，同分用创建时间兜底，保证稳定。
       orderBy:
         sort === 'latest'
           ? [{ last_listed_at: 'desc' }, { created_at: 'desc' }]
@@ -62,55 +59,24 @@ export default async function characterRoutes(app: FastifyInstance) {
         avatar_url: true,
         tags: true,
         creator: true,
+        sort_order: true,
       },
     });
 
-    let ordered = characters;
-    let featuredIds = new Set<string>();
-
-    if (sort === 'recommended') {
-      const [snapshot, pinned] = await Promise.all([
-        loadCharacterRankingScores(),
-        resolveLobbyPinnedCharacters(request.log),
-      ]);
-      // 排序分不可用（job 还没跑过第一轮，或查询失败）时保持运营顺序。
-      // 不能把空结果当成「所有卡样本都是 0」——那会让整个大厅落进冷启动池被随机打乱。
-      ordered = snapshot
-        ? buildRecommendedOrder({
-            operatorOrdered: characters,
-            scores: snapshot.scores,
-            minSample: snapshot.minSample,
-            protectedPrefix: LOBBY_FEATURED_POSITION_COUNT,
-            pinnedIds: pinned.characterIds,
-          })
-        : // 分数没有也要认固定位：运营点的主推位与打分无关，不该被 job 状态连带拖掉
-          applyPinnedOnly(characters, pinned.characterIds);
-
-      featuredIds = resolveLobbyFeaturedIds({
-        operatorOrdered: characters,
-        snapshot,
-        pinnedIds: pinned.characterIds,
-      });
-    }
-
-    const charactersSummary: CharacterSummary[] = ordered.map((c: (typeof characters)[number]) => ({
-      id: c.id,
-      name: c.name,
-      description: c.description,
-      avatar_url: resolveCharacterAvatarUrl(c.id, c.avatar_url),
-      personality_tags: Array.isArray(c.tags) ? (c.tags as string[]) : [],
-      author_name: c.creator,
-      // 「最新」页不保留运营固定位，也不残留热门金框。
-      is_featured: featuredIds.has(c.id),
-    }));
-
-    // 推荐页的冷启动卡每次请求重排，缓存会把随机结果钉死；「最新」页是确定顺序，保留 60 秒。
-    reply.header(
-      'Cache-Control',
-      sort === 'recommended'
-        ? 'no-store'
-        : 'public, max-age=60, s-maxage=60, stale-while-revalidate=60'
+    const charactersSummary: CharacterSummary[] = characters.map(
+      (c: (typeof characters)[number]) => ({
+        id: c.id,
+        name: c.name,
+        description: c.description,
+        avatar_url: resolveCharacterAvatarUrl(c.id, c.avatar_url),
+        personality_tags: Array.isArray(c.tags) ? (c.tags as string[]) : [],
+        author_name: c.creator,
+        // 「最新」页不残留热门金框；推荐页只给 sort_order 0–7。
+        is_featured: sort === 'recommended' && isLobbyFeatured(c.sort_order),
+      })
     );
+
+    reply.header('Cache-Control', 'public, max-age=60, s-maxage=60, stale-while-revalidate=60');
     return reply.send(ok<GetCharactersData>({ characters: charactersSummary }));
   });
 
@@ -153,30 +119,13 @@ export default async function characterRoutes(app: FastifyInstance) {
   app.get('/api/characters/:id', async (request, reply) => {
     const { id } = request.params as { id: string };
 
-    // 金框判定必须与大厅同源：大厅是「运营固定位 + 排序分主池」，这里若还按 sort_order 前八算，
-    // 同一张卡会出现在列表有金框、点进详情没有。
-    const [character, lobbyIds, snapshot, pinned] = await Promise.all([
-      prisma.character.findFirst({
-        where: { id, enabled: true, archived_at: null },
-      }),
-      prisma.character.findMany({
-        where: { enabled: true, archived_at: null },
-        orderBy: [{ sort_order: 'asc' }, { created_at: 'desc' }],
-        select: { id: true },
-      }),
-      loadCharacterRankingScores(),
-      resolveLobbyPinnedCharacters(request.log),
-    ]);
+    const character = await prisma.character.findFirst({
+      where: { id, enabled: true, archived_at: null },
+    });
 
     if (!character) {
       return reply.status(404).send(fail('NOT_FOUND', 'Character not found'));
     }
-
-    const featuredIds = resolveLobbyFeaturedIds({
-      operatorOrdered: lobbyIds,
-      snapshot,
-      pinnedIds: pinned.characterIds,
-    });
 
     const characterDetail: CharacterDetail = {
       id: character.id,
@@ -185,7 +134,7 @@ export default async function characterRoutes(app: FastifyInstance) {
       avatar_url: resolveCharacterAvatarUrl(character.id, character.avatar_url),
       personality_tags: Array.isArray(character.tags) ? (character.tags as string[]) : [],
       author_name: character.creator,
-      is_featured: featuredIds.has(character.id),
+      is_featured: isLobbyFeatured(character.sort_order),
       greeting: character.first_mes,
       creator_notes: character.creator_notes,
     };
